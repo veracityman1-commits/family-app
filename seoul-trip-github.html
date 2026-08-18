@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>서울여행 · 우리 가족 동행 앱</title>
+<style>
+:root{
+  --l5:#996CAC;
+  --ink:#1b2130; --sub:#6b7486; --paper:#f2f4f7; --card:#ffffff;
+  --l1:#0052A4;          /* 1호선 남색 = 메인 액센트 */
+  --gyeongui:#57b6a0;    /* 경의중앙선 */
+  --l3:#EF7C1C; --l4:#00A5DE; --l8:#E6186C; --l9:#BDB092;
+  --bus:#3d5afe; --taxi:#c7433d; --walk:#9aa3b2;
+  --mission:#e0932f; --done:#2e9e6b; --warn:#d64545;
+  --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:'Pretendard',-apple-system,'Noto Sans KR','Malgun Gothic',sans-serif;background:var(--paper);color:var(--ink);font-size:16px;line-height:1.45;padding-bottom:76px}
+button{font-family:inherit;border:0;background:none;cursor:pointer;color:inherit}
+input,select,textarea{font-family:inherit;font-size:15px;border:1px solid #d7dce4;border-radius:10px;padding:10px 12px;width:100%;background:#fff;color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--l1);outline-offset:1px}
+
+/* ── 상단 헤더 ─────────────────────────── */
+header{position:sticky;top:0;z-index:30;background:var(--l1);color:#fff;padding:14px 16px 12px;box-shadow:0 2px 10px rgba(0,30,80,.25)}
+.h-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.h-title{font-weight:800;font-size:19px;letter-spacing:-.3px}
+.h-title small{font-weight:500;font-size:12px;opacity:.85;margin-left:6px}
+.h-user{font-size:12px;background:rgba(255,255,255,.18);padding:4px 10px;border-radius:99px}
+.h-now{margin-top:8px;font-size:13px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.h-now .big{font-size:15px;font-weight:700}
+.sync{font-size:11px;opacity:.8}
+.deadline{margin-top:8px;background:#fff;color:var(--warn);font-weight:700;font-size:13px;border-radius:10px;padding:8px 12px;display:none;align-items:center;gap:8px}
+.deadline.show{display:flex}
+.deadline .t{font-variant-numeric:tabular-nums;font-size:16px}
+
+/* ── 날짜 탭 ─────────────────────────── */
+.daytabs{display:flex;background:#fff;border-bottom:1px solid #e3e7ee;position:sticky;top:0;z-index:25}
+.daytabs button{flex:1;padding:12px 4px;font-size:14px;font-weight:600;color:var(--sub);border-bottom:3px solid transparent}
+.daytabs button.on{color:var(--l1);border-color:var(--l1)}
+.daytabs button b{display:block;font-size:16px}
+
+/* ── 노선도식 타임라인 (시그니처) ───────── */
+main{max-width:560px;margin:0 auto;padding:14px 14px 24px}
+.tl{position:relative;padding-left:34px}
+.tl-item{position:relative;margin-bottom:6px}
+.rail{position:absolute;left:-24px;top:0;bottom:-6px;width:6px;border-radius:3px;background:#d9dee7}
+.tl-item:last-child .rail{bottom:auto;height:50%}
+.dot{position:absolute;left:-31px;top:16px;width:20px;height:20px;border-radius:50%;background:#fff;border:5px solid #c3cad6;z-index:2;transition:.2s}
+.tl-item.now .dot{border-color:var(--l1);box-shadow:0 0 0 5px rgba(0,82,164,.18)}
+.tl-item.done .dot{border-color:var(--done);background:var(--done)}
+.tl-item.done .dot::after{content:"✓";position:absolute;inset:0;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.card{background:var(--card);border-radius:var(--r);padding:13px 14px;box-shadow:0 1px 4px rgba(20,30,60,.07)}
+.tl-item.now .card{outline:2px solid var(--l1)}
+.tl-item.done .card{opacity:.62}
+.c-head{display:flex;align-items:flex-start;gap:10px}
+.c-time{font-weight:800;font-size:15px;font-variant-numeric:tabular-nums;color:var(--l1);min-width:48px}
+.c-main{flex:1}
+.c-title{font-weight:700;font-size:16px;letter-spacing:-.2px}
+.c-sub{font-size:13px;color:var(--sub);margin-top:2px}
+.chk{width:34px;height:34px;border-radius:10px;border:2px solid #d7dce4;flex-shrink:0;font-size:16px;color:#c3cad6;transition:.15s}
+.tl-item.done .chk{background:var(--done);border-color:var(--done);color:#fff}
+.c-by{font-size:11px;color:var(--done);margin-top:4px}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;margin-right:5px;vertical-align:1px}
+.b-warn{background:#fdecec;color:var(--warn)}
+.b-mission{background:#fdf1dc;color:var(--mission)}
+.b-resv{background:#e8f0fb;color:var(--l1)}
+
+/* 이동 카드 = 노선 세그먼트 */
+.tl-item.move .card{background:transparent;box-shadow:none;padding:6px 0 6px 2px}
+.tl-item.move .dot{display:none}
+.seg{border-left:6px solid var(--walk);margin-left:-30px;padding:8px 0 8px 24px;border-radius:0}
+.seg .line-badge{display:inline-flex;align-items:center;gap:6px;background:#fff;border-radius:99px;padding:5px 12px 5px 6px;font-size:13px;font-weight:700;box-shadow:0 1px 3px rgba(20,30,60,.1)}
+.line-badge .chip{color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px}
+.seg .m-detail{font-size:13px;color:var(--sub);margin-top:6px;line-height:1.5;display:none}
+.seg.open .m-detail{display:block}
+.m-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.m-actions a,.m-actions button.mbtn{font-size:13px;font-weight:700;padding:8px 12px;border-radius:10px;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.a-nav{background:var(--l1);color:#fff}
+.a-info{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(20,30,60,.12)}
+.role{font-size:12px;color:var(--sub);margin-top:8px;display:flex;align-items:center;gap:6px}
+.role select{width:auto;padding:4px 8px;font-size:12px;border-radius:8px}
+.role .r-name{font-weight:800;color:var(--mission)}
+
+/* 미션 */
+.tl-item.mission .card{background:#fffaf0;border:1px dashed #ecc98a}
+.tl-item.mission .c-time{color:var(--mission)}
+
+/* 플랜B */
+.planb{background:#fff;border-radius:var(--r);padding:14px;margin:10px 0 16px;box-shadow:0 1px 4px rgba(20,30,60,.07)}
+.planb h3{font-size:14px;margin-bottom:8px}
+.pb-row{display:flex;gap:8px}
+.pb-row button{flex:1;padding:10px;border-radius:10px;font-size:14px;font-weight:700;background:#eef1f6;color:var(--sub)}
+.pb-row button.sel{background:var(--l1);color:#fff}
+
+/* ── 하단 탭 ─────────────────────────── */
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e3e7ee;display:flex;z-index:40;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;padding:10px 2px 8px;font-size:11px;color:var(--sub);display:flex;flex-direction:column;gap:2px;align-items:center}
+nav button .ic{font-size:20px}
+nav button.on{color:var(--l1);font-weight:700}
+
+/* ── 시트 공통 ─────────────────────────── */
+.sheet{display:none}
+.sheet.on{display:block}
+.sec{background:#fff;border-radius:var(--r);padding:15px;margin-bottom:12px;box-shadow:0 1px 4px rgba(20,30,60,.07)}
+.sec h3{font-size:15px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.sec h3 small{font-weight:500;color:var(--sub);font-size:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{background:var(--l1);color:#fff;font-weight:700;padding:12px;border-radius:11px;width:100%;font-size:15px;margin-top:10px}
+.btn.ghost{background:#eef1f6;color:var(--ink)}
+.money{font-variant-numeric:tabular-nums;font-weight:800}
+.b-list{margin-top:10px}
+.b-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f0f2f6;font-size:14px}
+.b-row .cat{font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;background:#eef1f6;color:var(--sub);margin-right:7px}
+.b-row .del{color:#c3cad6;font-size:16px;padding:4px 6px}
+.gauge{height:10px;background:#eef1f6;border-radius:99px;overflow:hidden;margin:6px 0 4px}
+.gauge i{display:block;height:100%;background:var(--gyeongui);border-radius:99px;transition:.3s}
+.gauge i.over{background:var(--warn)}
+.g-lab{display:flex;justify-content:space-between;font-size:12px;color:var(--sub)}
+.rv{border:1px solid #e3e7ee;border-radius:12px;padding:12px;margin-bottom:10px}
+.rv .rv-h{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:14px}
+.rv .st{font-size:11px;font-weight:800;padding:3px 9px;border-radius:99px;background:#fdecec;color:var(--warn)}
+.rv .st.ok{background:#e6f6ee;color:var(--done)}
+.rv input{margin-top:8px;font-size:14px}
+.rv img{max-width:100%;border-radius:8px;margin-top:8px}
+.note{font-size:12px;color:var(--sub);margin-top:8px;line-height:1.5}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.stat div{background:#f6f8fb;border-radius:11px;padding:12px 4px}
+.stat b{display:block;font-size:22px;font-weight:800;color:var(--l1)}
+.stat span{font-size:11px;color:var(--sub)}
+pre.summary{white-space:pre-wrap;background:#f6f8fb;border-radius:10px;padding:12px;font-size:13px;font-family:inherit;margin-top:10px}
+
+.offline{background:#fdf1dc;color:#8a5b12;font-size:12px;padding:8px 12px;border-radius:10px;margin-bottom:10px;display:none}
+.offline.show{display:block}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="h-top">
+    <div class="h-title">서울여행<small>10.2 금 – 10.4 일</small></div>
+    <button class="h-user" id="userBadge" onclick="cycleUser()" title="탭하면 이름 변경">👤 가족</button>
+  </div>
+  <div class="h-now">
+    <span class="big" id="nowLabel">—</span>
+    <span id="progressLabel"></span>
+    <span class="sync" id="syncLabel"></span>
+  </div>
+  <div class="deadline" id="deadlineBar">⏰ <span id="deadlineText"></span> <span class="t" id="deadlineTime"></span></div>
+</header>
+
+<div class="daytabs" id="daytabs">
+  <button data-d="0" onclick="setDay(0)"><b>10/2 금</b>용산 · 박물관</button>
+  <button data-d="1" onclick="setDay(1)"><b>10/3 토</b>종로 · 서대문</button>
+  <button data-d="2" onclick="setDay(2)"><b>10/4 일</b>잠실 · 귀가</button>
+</div>
+
+<main>
+  <div class="offline" id="offlineBar">⚠️ 저장 공간을 쓸 수 없습니다. 브라우저의 시크릿 모드이거나 저장 용량이 가득 찬 경우일 수 있어요.</div>
+
+  <!-- 일정 -->
+  <div class="sheet on" id="tab-timeline">
+    <div class="planb" id="planbBox"></div>
+    <div class="tl" id="timeline"></div>
+  </div>
+
+  <!-- 예산 -->
+  <div class="sheet" id="tab-budget">
+    <div class="sec">
+      <h3>출발 전 확정 지출 <small>결제 완료</small></h3>
+      <div id="prepaidList"></div>
+    </div>
+    <div class="sec">
+      <h3>현지 교통비 <small>목표 80,000원 (B안)</small></h3>
+      <div class="gauge"><i id="gTransit"></i></div>
+      <div class="g-lab"><span id="gTransitLab">0원</span><span>80,000원</span></div>
+    </div>
+    <div class="sec">
+      <h3>전체 지출</h3>
+      <div class="stat">
+        <div><b id="sumTransit">0</b><span>교통</span></div>
+        <div><b id="sumFood">0</b><span>식사</span></div>
+        <div><b id="sumEtc">0</b><span>입장·기타</span></div>
+      </div>
+      <div class="b-row" style="border:0;padding-top:12px"><span style="font-weight:700">확정 지출 + 현지 지출 합계</span><span><span class="money" id="grandTotal">0</span>원</span></div>
+      <div class="grid2" style="margin-top:12px">
+        <select id="bCat"><option value="교통">교통</option><option value="식사">식사</option><option value="입장">입장</option><option value="기타">기타</option></select>
+        <input id="bAmt" type="number" inputmode="numeric" placeholder="금액 (원)">
+      </div>
+      <input id="bMemo" placeholder="메모 (예: 벤티 김포→삼각지)" style="margin-top:8px">
+      <button class="btn" onclick="addBudget()">지출 기록하기</button>
+      <div class="b-list" id="bList"></div>
+    </div>
+  </div>
+
+  <!-- 예약 -->
+  <div class="sheet" id="tab-resv">
+    <div class="sec">
+      <h3>예약 확인함 <small>예약번호를 적고, 캡처는 사진으로 첨부</small></h3>
+      <div id="rvList"></div>
+      <p class="note">사진은 자동으로 압축돼 저장됩니다. 확대가 필요한 QR은 폰 갤러리 원본도 함께 보관하세요.</p>
+    </div>
+  </div>
+
+  <!-- 정보 -->
+  <div class="sheet" id="tab-info">
+    <div class="sec">
+      <h3>숙소 · 비상 정보 <small>한 번 적으면 세 폰 모두 보여요</small></h3>
+      <input id="iAddr" placeholder="숙소 주소 (몬드스테이 · 올림픽로71길 68 101호)" onchange="saveInfo()">
+      <input id="iHost" placeholder="호스트 연락처" style="margin-top:8px" onchange="saveInfo()">
+      <input id="iDoor" placeholder="도어락 비번 / 입실 안내" style="margin-top:8px" onchange="saveInfo()">
+      <input id="iFlight" placeholder="항공편명 (가는편 / 오는편)" style="margin-top:8px" onchange="saveInfo()">
+    </div>
+    <div class="sec">
+      <h3>날씨 메모</h3>
+      <input id="iW0" placeholder="10/2 금 — 예: 맑음 12~21°C, 겉옷" onchange="saveInfo()">
+      <input id="iW1" placeholder="10/3 토" style="margin-top:8px" onchange="saveInfo()">
+      <input id="iW2" placeholder="10/4 일" style="margin-top:8px" onchange="saveInfo()">
+      <p class="note">출발 전날 날씨 앱을 보고 여기 적어두면 아침마다 상단에서 바로 보입니다.</p>
+    </div>
+    <div class="sec">
+      <h3>이 앱에 대해</h3>
+      <p class="note">· 체크·예산 기록은 <b>이 휴대폰에만</b> 저장됩니다 (가족끼리 자동 공유되지 않음)<br>· 인터넷 없이도 열립니다 (한 번 연 뒤)<br>· 브라우저 기록을 지우면 저장 내용도 지워지니 주의하세요<br>· 홈 화면에 추가하면 앱처럼 쓸 수 있어요</p>
+    </div>
+    <div class="sec">
+      <h3>교통카드 체크</h3>
+      <p class="note">· 서준·서우: 어린이 등록된 티머니 각 1장<br>· 막내: 만 6세 미만 무료 — 보호자와 같은 개찰구 통과<br>· 버스 다인승: 기사님께 인원 말하고 태그</p>
+    </div>
+  </div>
+
+  <!-- 요약 -->
+  <div class="sheet" id="tab-sum">
+    <div class="sec">
+      <h3>여행 현황</h3>
+      <div class="stat">
+        <div><b id="stVisit">0/0</b><span>방문 완료</span></div>
+        <div><b id="stMission">0/0</b><span>미션 완료</span></div>
+        <div><b id="stSpend">0</b><span>총 지출(원)</span></div>
+      </div>
+      <button class="btn ghost" onclick="makeSummary()">요약 글 만들기</button>
+      <pre class="summary" id="sumText" style="display:none"></pre>
+    </div>
+  </div>
+</main>
+
+<nav>
+  <button class="on" data-t="timeline" onclick="setTab('timeline',this)"><span class="ic">🚇</span>일정</button>
+  <button data-t="budget" onclick="setTab('budget',this)"><span class="ic">💰</span>예산</button>
+  <button data-t="resv" onclick="setTab('resv',this)"><span class="ic">🎫</span>예약</button>
+  <button data-t="info" onclick="setTab('info',this)"><span class="ic">🏠</span>정보</button>
+  <button data-t="sum" onclick="setTab('sum',this)"><span class="ic">📔</span>요약</button>
+</nav>
+
+<script>
+/* ══════════ 데이터: B안 v2 확정 일정 ══════════ */
+const P = { // 좌표 (lat,lng)
+  gimpo:[37.5585,126.7906], war:[37.5369,126.9772], museum:[37.5240,126.9803],
+  cheonho:[37.5385,127.1237], palace:[37.5796,126.9770], gung:[37.5765,126.9750],
+  tosok:[37.5773,126.9718], sci:[37.5822,127.0033], prison:[37.5744,126.9563],
+  namsan:[37.5512,126.9882], lotte:[37.5133,127.1028], avia:[37.5599,126.7810]
+};
+function navWeb(sn,s,en,e){
+  return `https://m.map.naver.com/route.nhn?menu=route&sname=${encodeURIComponent(sn)}&sx=${s[1]}&sy=${s[0]}&ename=${encodeURIComponent(en)}&ex=${e[1]}&ey=${e[0]}&pathType=1`;
+}
+function navApp(sn,s,en,e){
+  return `nmap://route/public?slat=${s[0]}&slng=${s[1]}&sname=${encodeURIComponent(sn)}&dlat=${e[0]}&dlng=${e[1]}&dname=${encodeURIComponent(en)}&appname=seoultrip`;
+}
+function openNav(sn,slat,slng,en,elat,elng){
+  const app=navApp(sn,[slat,slng],en,[elat,elng]);
+  const web=navWeb(sn,[slat,slng],en,[elat,elng]);
+  const t0=Date.now();
+  window.location.href=app;
+  setTimeout(()=>{ if(document.visibilityState==='visible' && Date.now()-t0<2500) window.open(web,'_blank'); },1400);
+}
+/* type: visit|move|meal|flight|mission / line: 색 키 / dl: 마감 datetime / dlLabel */
+const DAYS = [
+ { date:'2026-10-02', items:[
+  {id:'f1',t:'08:35',type:'flight',title:'제주공항 출발 ✈️',sub:'대한항공 DRENH9 · 김포 09:40 도착'},
+  {id:'m1',t:'09:55',type:'move',line:'taxi',chip:'🚐 벤티',title:'김포공항 → 전쟁기념관',time:'30분 · 약 3만원',
+   detail:'짐+첫날 아침이라 택시 유지 구간. 대체: 공항철도 김포공항→공덕 → 6호선 삼각지 (40분)',
+   from:['김포공항',P.gimpo],to:['전쟁기념관',P.war]},
+  {id:'v1',t:'10:25',type:'visit',title:'전쟁기념관',sub:'짐은 물품보관소에 · 옥외전시 먼저',resv:false},
+  {id:'ms1',t:'',type:'mission',title:'미션 · 거북선 모형을 찾아라!',sub:'찾으면 가족사진 한 장 📸'},
+  {id:'m2',t:'12:35',type:'move',line:'l4',chip:'4호선',title:'삼각지 → 이촌 (1정거장)',time:'5분',
+   detail:'이촌역 2번 출구 = 박물관나들길 직결',from:['삼각지역',P.war],to:['국립중앙박물관',P.museum]},
+  {id:'e1',t:'12:55',type:'meal',title:'점심 — 박물관 거울못 식당/푸드코트',sub:'짐은 무료 대형락커에 먼저'},
+  {id:'v2',t:'13:50',type:'visit',title:'국립중앙박물관',sub:'상설전시 · 사유의 방',resv:true,dl:'2026-10-02T14:00',dlLabel:'어린이박물관 회차'},
+  {id:'ms2',t:'',type:'mission',title:'미션 · 사유의 방 반가사유상 — 무슨 생각 중일까?',sub:'각자 답을 하나씩 말하기'},
+  {id:'m3',t:'16:30',type:'move',line:'gyeongui',chip:'경의중앙+5호선',title:'이촌 → 천호 (짐 들고)',time:'35분 · 왕십리 환승 1회',
+   detail:'경의중앙선 이촌→왕십리 → 5호선 천호역 1·2번 출구. 역에서 숙소까지 평지 도보 5분',from:['이촌역',P.museum],to:['천호역',P.cheonho]},
+  {id:'v3',t:'17:15',type:'visit',title:'몬드스테이 체크인',sub:'올림픽로71길 68 101호 · 천호역 도보 5분 · 1층·평지'},
+  {id:'e2',t:'18:30',type:'meal',title:'저녁 — 천호 먹자골목',sub:'현대백화점 천호점·이마트 인근 · 도보'}
+ ]},
+ { date:'2026-10-03', items:[
+  {id:'m4',t:'08:10',type:'move',line:'l5',chip:'5호선',title:'천호 → 광화문 직행 ✨',time:'30분 · 환승 없음',
+   detail:'5호선 천호역 → 광화문역, 환승·계단 없이 한 번에. 광화문역 2번 출구에서 경복궁 도보 10분',
+   from:['천호역',P.cheonho],to:['경복궁',P.palace]},
+  {id:'v4',t:'09:00',type:'visit',title:'경복궁',sub:'근정전 · 경회루 (한복 착용 시 무료)'},
+  {id:'v5',t:'10:00',type:'visit',title:'흥례문 수문장 교대식',sub:'10시 정각 · 궁 안에서',dl:'2026-10-03T10:00',dlLabel:'교대식 시작'},
+  {id:'ms3',t:'',type:'mission',title:'미션 · 수문장 아저씨와 사진 찍기',sub:'교대식 끝나고!'},
+  {id:'v6',t:'11:15',type:'visit',title:'국립고궁박물관',sub:'경복궁 정문 옆 · 무료 · 1시간'},
+  {id:'e3',t:'12:10',type:'meal',title:'점심 — 토속촌 삼계탕',sub:'개천절 대기 감안, 조금 일찍'},
+  {id:'m5',t:'13:00',type:'move',line:'l3',chip:'3호선',title:'경복궁 → 혜화',time:'30분 · 충무로 환승 4호선',
+   detail:'3호선 경복궁 → 충무로 환승 → 4호선 혜화역',from:['경복궁역',P.palace],to:['국립어린이과학관',P.sci]},
+  {id:'v7',t:'13:30',type:'visit',title:'국립어린이과학관',sub:'체험 전시',resv:true,dl:'2026-10-03T13:30',dlLabel:'과학관 예약 회차'},
+  {id:'m6',t:'15:40',type:'move',line:'taxi',chip:'🚐 벤티',title:'혜화 → 서대문형무소',time:'20분 · 약 1.5만원',
+   detail:'환승 2회 구간이라 택시 유지. 대체: 4호선 혜화→충무로→3호선 독립문 (30분)',
+   from:['혜화역',P.sci],to:['서대문형무소역사관',P.prison]},
+  {id:'v8',t:'16:00',type:'visit',title:'서대문형무소역사관',sub:'항일 역사',dl:'2026-10-03T17:30',dlLabel:'형무소 입장 마감'},
+  {id:'ms4',t:'',type:'mission',title:'미션 · 태극기를 몇 번 찾을 수 있을까?',sub:'나올 때 개수 비교'},
+  {id:'m7',t:'18:00',type:'move',line:'l5',chip:'3→5호선',title:'독립문 → 천호',time:'45분 · 종로3가 환승 1회',
+   detail:'3호선 독립문 → 종로3가 환승 → 5호선 천호. 저녁 시간대라 앉아갈 확률 높음',from:['독립문역',P.prison],to:['천호역',P.cheonho]},
+  {id:'e4',t:'18:50',type:'meal',title:'저녁 — 천호 먹자골목',sub:'숙소 도보권 · 관광객 없는 현지 상권'},
+  {id:'pb1',t:'20:00',type:'planb'}
+ ]},
+ { date:'2026-10-04', items:[
+  {id:'m8',t:'10:15',type:'move',line:'l8',chip:'8호선',title:'체크아웃 → 잠실 직행 ✨',time:'10분 · 환승 없음 · 3정거장',
+   detail:'짐 들고 가는 구간이 10분으로 끝남. 잠실역 지하 롯데월드몰 직결',from:['천호역',P.cheonho],to:['롯데월드몰',P.lotte]},
+  {id:'v9',t:'10:25',type:'visit',title:'롯데월드몰 — 짐 보관',sub:'대형락커 · 만석 시 안내데스크 짐보관'},
+  {id:'v10',t:'10:30',type:'visit',title:'서울스카이 전망대',sub:'낮 전망',resv:true,dl:'2026-10-04T10:30',dlLabel:'스카이 예약 시간'},
+  {id:'ms5',t:'',type:'mission',title:'미션 · 전망대에서 남산타워 찾기 🔭',sub:'우리 어제 갔던(또는 안 갔던) 그곳!'},
+  {id:'v11',t:'11:50',type:'visit',title:'아쿠아리움',sub:'벨루가 · 상어터널 (콤보권)'},
+  {id:'e5',t:'13:00',type:'meal',title:'점심 — 롯데월드몰',sub:'13:50 출발 위해 조금 일찍'},
+  {id:'m9',t:'13:50',type:'move',line:'l9',chip:'8→9호선',title:'잠실 → 김포공항 (짐 찾아서)',time:'급행 60분 / 일반 75분',
+   detail:'8호선 잠실→석촌 → 9호선. 올림픽대로 정체 무관 ✨ 혼잡하면 급행 대신 일반열차 — 한산해서 5인 착석 유리',
+   from:['잠실역',P.lotte],to:['김포공항',P.gimpo]},
+  {id:'pb2',t:'15:50',type:'planb2'},
+  {id:'f2',t:'19:05',type:'flight',title:'김포 출발 ✈️',sub:'진에어 AQSL7D · 제주 20:15 도착 · 17:20 짐 찾고 수속',dl:'2026-10-04T17:20',dlLabel:'공항 수속 시작'}
+ ]}
+];
+const LINECOLOR={l5:'#996CAC',l1:'#0052A4',l3:'#EF7C1C',l4:'#00A5DE',l8:'#E6186C',l9:'#BDB092',gyeongui:'#57b6a0',bus:'#3d5afe',taxi:'#c7433d',walk:'#9aa3b2'};
+const PREPAID=[
+ {label:'항공 가는편 (10/2 대한항공)',amt:239100},
+ {label:'항공 오는편 (10/4 진에어)',amt:453500},
+ {label:'숙소 2박 (몬드스테이)',amt:341800}
+];
+const PREPAID_SUM=PREPAID.reduce((a,b)=>a+b.amt,0);
+const RESV_FIXED=[
+ {id:'r0a',title:'항공 가는편 — 대한항공',when:'10/2(금) 08:35 제주→김포 · DRENH9'},
+ {id:'r0b',title:'항공 오는편 — 진에어',when:'10/4(일) 19:05 김포→제주 · AQSL7D'},
+ {id:'r0c',title:'숙소 — 몬드스테이(천호)',when:'10/2 15:00 체크인 ~ 10/4 11:00 체크아웃 · 올림픽로71길 68 101호'},
+ {id:'r1',title:'국립중앙박물관 어린이박물관',when:'10/2(금) 오후 회차'},
+ {id:'r2',title:'국립어린이과학관',when:'10/3(토) 13:30 전후 회차'},
+ {id:'r3',title:'서울스카이 (+아쿠아리움 콤보)',when:'10/4(일) 10:30 전후'}
+];
+const DEADLINES = [];
+DAYS.forEach((d,di)=>d.items.forEach(it=>{ if(it.dl) DEADLINES.push({dt:new Date(it.dl),label:it.dlLabel,id:it.id}); }));
+
+/* ══════════ 상태 & 공유 저장 ══════════ */
+let user='가족', day=0, tab='timeline';
+const USERS=['가족','아빠','엄마','서준','서우'];
+function cycleUser(){user=USERS[(USERS.indexOf(user)+1)%USERS.length];document.getElementById('userBadge').textContent='👤 '+user;}
+let S={checks:{},budget:[],plan:{namsan:'rest',avia:'go'},resv:{},info:{},roles:{}};
+let storageOK=true;
+const KEYS=['checks','budget','plan','resv','info','roles'];
+
+/* 이 기기에 저장 (localStorage) — 로그인 불필요, 기기별 독립 기록 */
+async function loadAll(showSync){
+  for(const k of KEYS){
+    try{
+      const v=localStorage.getItem('trip:'+k);
+      if(v) S[k]=JSON.parse(v);
+    }catch(e){ /* 없으면 기본값 */ }
+  }
+  renderAll();
+  if(showSync) sync('불러옴');
+}
+async function save(k){
+  try{
+    localStorage.setItem('trip:'+k,JSON.stringify(S[k]));
+    storageOK=true; sync('저장됨');
+  }catch(e){
+    storageOK=false;
+    document.getElementById('offlineBar').classList.add('show');
+  }
+}
+function sync(msg){
+  const el=document.getElementById('syncLabel');
+  el.textContent='🔄 '+msg+' '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('offlineBar').classList.toggle('show',!storageOK);
+}
+
+/* ══════════ 사용자 ══════════ */
+
+/* ══════════ 렌더 ══════════ */
+function fmt(n){return Number(n||0).toLocaleString('ko-KR')}
+function todayIdx(){
+  const t=new Date().toISOString().slice(0,10);
+  const i=DAYS.findIndex(d=>d.date===t);
+  return i>=0?i:0;
+}
+function setDay(d){ day=d;
+  document.querySelectorAll('.daytabs button').forEach(b=>b.classList.toggle('on',+b.dataset.d===d));
+  renderTimeline();
+}
+function setTab(t,btn){ tab=t;
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('on'));
+  document.getElementById('tab-'+t).classList.add('on');
+  if(t==='budget')renderBudget(); if(t==='resv')renderResv(); if(t==='info')fillInfo(); if(t==='sum')renderStats();
+}
+
+function itemVisible(it){
+  if(it.type==='planb'||it.type==='planb2')return true;
+  return true;
+}
+function nowItemId(){
+  const now=new Date(); const d=DAYS[day];
+  if(now.toISOString().slice(0,10)!==d.date)return null;
+  let cur=null;
+  d.items.forEach(it=>{ if(!it.t)return;
+    const dt=new Date(d.date+'T'+it.t); if(dt<=now)cur=it.id; });
+  return cur;
+}
+function renderTimeline(){
+  const box=document.getElementById('timeline'); box.innerHTML='';
+  const nowId=nowItemId();
+  // 플랜B 박스
+  const pb=document.getElementById('planbBox');
+  if(day===1){
+    pb.style.display='block';
+    pb.innerHTML=`<h3>🌙 오늘 밤 남산타워, 갈까요? <small style="color:var(--sub);font-weight:500">(컨디션 보고 당일 결정)</small></h3>
+    <div class="pb-row">
+      <button class="${S.plan.namsan==='rest'?'sel':''}" onclick="setPlan('namsan','rest')">기본 · 숙소 휴식</button>
+      <button class="${S.plan.namsan==='go'?'sel':''}" onclick="setPlan('namsan','go')">옵션 · 야경 가기</button>
+    </div>`;
+  } else if(day===2){
+    pb.style.display='block';
+    pb.innerHTML=`<h3>✈️ 공항 옆 국립항공박물관 들를까요?</h3>
+    <div class="pb-row">
+      <button class="${S.plan.avia==='go'?'sel':''}" onclick="setPlan('avia','go')">여유 있으면 가기</button>
+      <button class="${S.plan.avia==='skip'?'sel':''}" onclick="setPlan('avia','skip')">생략 · 공항 직행</button>
+    </div>`;
+  } else pb.style.display='none';
+
+  DAYS[day].items.forEach(it=>{
+    if(it.type==='planb'){
+      if(S.plan.namsan==='go'){
+        box.insertAdjacentHTML('beforeend', visitHTML({id:'v-nam',t:'20:00',type:'visit',title:'남산서울타워 야경 🌃',sub:'천호→택시 30분 · 케이블카 대기 길면 순환버스/택시 · 귀가 22시경'},nowId));
+        box.insertAdjacentHTML('beforeend', moveHTML({id:'m-nam',type:'move',line:'taxi',chip:'🚕 택시',title:'천호 ↔ 남산 왕복',time:'왕복 +5~6만원',detail:'개천절 케이블카 대기 1시간+ 가능 — 남산 순환버스 01번 또는 택시로 정상 진입 권장',from:['천호역',P.cheonho],to:['남산서울타워',P.namsan]}));
+      } else {
+        box.insertAdjacentHTML('beforeend', visitHTML({id:'v-rest',t:'20:00',type:'visit',title:'숙소 휴식 · 조기 취침',sub:'내일 잠실 일정 위해 체력 비축'},nowId));
+      }
+      return;
+    }
+    if(it.type==='planb2'){
+      if(S.plan.avia==='go'){
+        box.insertAdjacentHTML('beforeend', visitHTML({id:'v-avia',t:'15:20',type:'visit',title:'국립항공박물관 ✈️',sub:'관람 1시간 40분 · 짐은 공항 코인락커에 먼저 · 시뮬레이터 선착순 · 17:00 공항 복귀'},nowId));
+      }
+      return;
+    }
+    if(it.type==='move') box.insertAdjacentHTML('beforeend', moveHTML(it));
+    else box.insertAdjacentHTML('beforeend', visitHTML(it,nowId));
+  });
+  updateHeader();
+}
+function visitHTML(it,nowId){
+  const c=S.checks[it.id];
+  const cls=['tl-item',it.type==='mission'?'mission':'',c?'done':'',it.id===nowId?'now':''].join(' ');
+  const badges=(it.dl?`<span class="badge b-warn">⏰ ${it.dlLabel}</span>`:'')+(it.resv?`<span class="badge b-resv">예약</span>`:'')+(it.type==='mission'?`<span class="badge b-mission">미션</span>`:'');
+  return `<div class="${cls}" id="it-${it.id}"><div class="rail"></div><div class="dot"></div>
+    <div class="card"><div class="c-head">
+      <div class="c-time">${it.t||'⭐'}</div>
+      <div class="c-main"><div class="c-title">${it.title}</div>
+        ${badges?`<div style="margin-top:3px">${badges}</div>`:''}
+        ${it.sub?`<div class="c-sub">${it.sub}</div>`:''}
+        ${c?`<div class="c-by">✓ ${c.by!=='가족'?c.by+' · ':''}${c.at}</div>`:''}
+      </div>
+      <button class="chk" onclick="toggleCheck('${it.id}')">✓</button>
+    </div></div></div>`;
+}
+function moveHTML(it){
+  const col=LINECOLOR[it.line]||LINECOLOR.walk;
+  const role=S.roles[it.id];
+  return `<div class="tl-item move" id="it-${it.id}"><div class="rail" style="background:${col}"></div>
+    <div class="card"><div class="seg" id="seg-${it.id}" style="border-color:${col}">
+      <button class="line-badge" onclick="document.getElementById('seg-${it.id}').classList.toggle('open')">
+        <span class="chip" style="background:${col}">${it.chip}</span> ${it.title} <span style="color:var(--sub);font-weight:500;font-size:12px">· ${it.time}</span>
+      </button>
+      <div class="m-detail">${it.detail||''}
+        <div class="m-actions">
+          <button class="mbtn a-nav" onclick="openNav(&apos;${it.from[0]}&apos;,${it.from[1][0]},${it.from[1][1]},&apos;${it.to[0]}&apos;,${it.to[1][0]},${it.to[1][1]})">🧭 네이버지도 앱으로 길찾기</button>
+        </div>
+        <div class="role">이번 구간 안내 담당:
+          <select onchange="setRole('${it.id}',this.value)">
+            <option value="">선택</option>
+            ${['아빠','엄마','서준','서우'].map(n=>`<option ${role===n?'selected':''}>${n}</option>`).join('')}
+          </select>
+          ${role?`<span class="r-name">→ ${role}, 가족에게 경로 브리핑!</span>`:''}
+        </div>
+      </div>
+    </div></div></div>`;
+}
+async function toggleCheck(id){
+  if(S.checks[id]) delete S.checks[id];
+  else S.checks[id]={by:user,at:new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})};
+  renderTimeline(); await save('checks');
+}
+async function setRole(id,v){ if(v)S.roles[id]=v; else delete S.roles[id]; renderTimeline(); await save('roles'); }
+async function setPlan(k,v){ S.plan[k]=v; renderTimeline(); await save('plan'); }
+
+/* ══════════ 헤더: 지금 / 진행률 / 카운트다운 ══════════ */
+function updateHeader(){
+  const now=new Date();
+  const t=now.toISOString().slice(0,10);
+  const tripStart=new Date('2026-10-02'), tripEnd=new Date('2026-10-05');
+  let label;
+  if(now<tripStart){ const dd=Math.ceil((tripStart-now)/86400000); label=`출발까지 D-${dd}`; }
+  else if(now>=tripEnd){ label='여행 완료 🎉'; }
+  else{
+    const di=DAYS.findIndex(d=>d.date===t);
+    label=(di>=0?['1일차 · 용산','2일차 · 종로','3일차 · 잠실'][di]:'여행 중')+` · ${now.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})}`;
+  }
+  document.getElementById('nowLabel').textContent=label;
+  // 날씨 한 줄
+  const w=S.info['iW'+day];
+  document.getElementById('progressLabel').textContent = w?('☁️ '+w):'';
+  // 카운트다운: 가장 임박한 마감 (지나지 않은 것 중 12시간 이내)
+  const up=DEADLINES.filter(d=>d.dt>now && d.dt-now<12*3600e3 && !S.checks[d.id]).sort((a,b)=>a.dt-b.dt)[0];
+  const bar=document.getElementById('deadlineBar');
+  if(up){
+    bar.classList.add('show');
+    document.getElementById('deadlineText').textContent=up.label+'까지';
+    const ms=up.dt-now, h=Math.floor(ms/3600e3), m=Math.floor(ms%3600e3/60e3);
+    document.getElementById('deadlineTime').textContent=(h>0?h+'시간 ':'')+m+'분';
+  } else bar.classList.remove('show');
+}
+
+/* ══════════ 예산 ══════════ */
+async function addBudget(){
+  const amt=+document.getElementById('bAmt').value;
+  if(!amt){alert('금액을 입력해 주세요');return}
+  S.budget.push({id:Date.now(),cat:document.getElementById('bCat').value,amt,
+    memo:document.getElementById('bMemo').value,by:user,day:DAYS[day]?DAYS[day].date.slice(5):''});
+  document.getElementById('bAmt').value='';document.getElementById('bMemo').value='';
+  renderBudget(); await save('budget');
+}
+async function delBudget(id){ S.budget=S.budget.filter(b=>b.id!==id); renderBudget(); await save('budget'); }
+function renderBudget(){
+  document.getElementById('prepaidList').innerHTML=
+    PREPAID.map(x=>`<div class="b-row"><span>${x.label}</span><span><span class="money">${fmt(x.amt)}</span>원</span></div>`).join('')
+    +`<div class="b-row" style="border:0"><span style="font-weight:700">소계</span><span><span class="money">${fmt(PREPAID_SUM)}</span>원</span></div>`;
+  const sum=c=>S.budget.filter(b=>c.includes(b.cat)).reduce((a,b)=>a+b.amt,0);
+  const tr=sum(['교통']);
+  document.getElementById('sumTransit').textContent=fmt(tr);
+  document.getElementById('sumFood').textContent=fmt(sum(['식사']));
+  document.getElementById('sumEtc').textContent=fmt(sum(['입장','기타']));
+  const g=document.getElementById('gTransit'); const pct=Math.min(100,tr/80000*100);
+  g.style.width=pct+'%'; g.classList.toggle('over',tr>80000);
+  document.getElementById('gTransitLab').textContent=fmt(tr)+'원'+(tr>80000?' (초과!)':'');
+  document.getElementById('grandTotal').textContent=fmt(PREPAID_SUM+S.budget.reduce((a,b)=>a+b.amt,0));
+  document.getElementById('bList').innerHTML=S.budget.slice().reverse().map(b=>
+    `<div class="b-row"><span><span class="cat">${b.cat}</span>${b.memo||'-'} <small style="color:var(--sub)">· ${b.day} ${b.by}</small></span>
+     <span><span class="money">${fmt(b.amt)}</span>원 <button class="del" onclick="delBudget(${b.id})">✕</button></span></div>`).join('')
+    ||'<p class="note">아직 기록이 없어요. 첫 지출부터 적어보세요.</p>';
+}
+
+/* ══════════ 예약 ══════════ */
+function renderResv(){
+  document.getElementById('rvList').innerHTML=RESV_FIXED.map(r=>{
+    const d=S.resv[r.id]||{};
+    return `<div class="rv"><div class="rv-h"><span>${r.title}<br><small style="font-weight:500;color:var(--sub)">${r.when}</small></span>
+      <button class="st ${d.done?'ok':''}" onclick="toggleResv('${r.id}')">${d.done?'예약 완료':'예약 전'}</button></div>
+      <input placeholder="예약번호 / 메모" value="${d.memo||''}" onchange="setResvMemo('${r.id}',this.value)">
+      <input type="file" accept="image/*" style="margin-top:8px;padding:8px" onchange="attachImg('${r.id}',this)">
+      ${d.img?`<img src="${d.img}" alt="예약 확인 이미지">`:''}
+    </div>`;
+  }).join('');
+}
+async function toggleResv(id){ S.resv[id]=S.resv[id]||{}; S.resv[id].done=!S.resv[id].done; renderResv(); await save('resv'); }
+async function setResvMemo(id,v){ S.resv[id]=S.resv[id]||{}; S.resv[id].memo=v; await save('resv'); }
+function attachImg(id,input){
+  const f=input.files[0]; if(!f)return;
+  const img=new Image(), rd=new FileReader();
+  rd.onload=e=>{img.src=e.target.result};
+  img.onload=async()=>{
+    const cv=document.createElement('canvas'); const sc=Math.min(1,700/img.width);
+    cv.width=img.width*sc; cv.height=img.height*sc;
+    cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+    const data=cv.toDataURL('image/jpeg',0.6);
+    if(data.length>900000){alert('이미지가 너무 큽니다. 화면을 잘라서 다시 캡처해 주세요.');return}
+    S.resv[id]=S.resv[id]||{}; S.resv[id].img=data; renderResv(); await save('resv');
+  };
+  rd.readAsDataURL(f);
+}
+
+/* ══════════ 정보 ══════════ */
+const INFO_IDS=['iAddr','iHost','iDoor','iFlight','iW0','iW1','iW2'];
+function fillInfo(){ INFO_IDS.forEach(k=>{const el=document.getElementById(k); if(el)el.value=S.info[k]||'';}); }
+async function saveInfo(){ INFO_IDS.forEach(k=>{S.info[k]=document.getElementById(k).value;}); updateHeader(); await save('info'); }
+
+/* ══════════ 요약 ══════════ */
+function allItems(){ let a=[]; DAYS.forEach(d=>a=a.concat(d.items.filter(i=>['visit','meal','flight','mission'].includes(i.type)))); return a; }
+function renderStats(){
+  const items=allItems();
+  const vis=items.filter(i=>i.type!=='mission'), mis=items.filter(i=>i.type==='mission');
+  document.getElementById('stVisit').textContent=vis.filter(i=>S.checks[i.id]).length+'/'+vis.length;
+  document.getElementById('stMission').textContent=mis.filter(i=>S.checks[i.id]).length+'/'+mis.length;
+  document.getElementById('stSpend').textContent=fmt(PREPAID_SUM+S.budget.reduce((a,b)=>a+b.amt,0));
+}
+function makeSummary(){
+  renderStats();
+  const items=allItems();
+  const doneList=items.filter(i=>S.checks[i.id]).map(i=>`· ${i.title} (${S.checks[i.id].by})`).join('\n');
+  const spend=PREPAID_SUM+S.budget.reduce((a,b)=>a+b.amt,0);
+  const tr=S.budget.filter(b=>b.cat==='교통').reduce((a,b)=>a+b.amt,0);
+  const txt=`🚄 서울 가족여행 요약 (10/2~10/4)\n\n완료한 일정:\n${doneList||'· (아직 없음)'}\n\n총 지출 ${fmt(spend)}원 (교통 ${fmt(tr)}원 — 목표 8만원 ${tr<=80000?'달성 ✅':'초과'})\n\n수고했어, 우리 가족! 🎉`;
+  const el=document.getElementById('sumText'); el.style.display='block'; el.textContent=txt;
+  if(navigator.clipboard) navigator.clipboard.writeText(txt).then(()=>sync('요약 복사됨')).catch(()=>{});
+}
+
+/* ══════════ 부팅 ══════════ */
+function renderAll(){ renderTimeline(); renderBudget(); renderResv(); fillInfo(); renderStats(); }
+setDay(todayIdx());
+loadAll(true);
+setInterval(updateHeader,20000);
+</script>
+</body>
+</html>
