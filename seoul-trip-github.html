@@ -141,6 +141,37 @@ pre.summary{white-space:pre-wrap;background:#f6f8fb;border-radius:10px;padding:1
 .st-src button{flex:1;padding:9px;border-radius:9px;font-size:13px;font-weight:700;background:#eef1f6;color:var(--sub)}
 .st-src button.sel{background:var(--l1);color:#fff}
 
+
+
+.b-row.edit{display:block;background:#f6f8fb;border-radius:10px;padding:10px;margin:6px 0;border:0}
+.b-row.edit .er{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.b-row.edit input,.b-row.edit select{font-size:14px;padding:8px 10px}
+.b-row.edit .memo{margin-top:7px}
+.b-row.edit .btns{display:flex;gap:7px;margin-top:8px}
+.b-row.edit .btns button{flex:1;padding:9px;border-radius:9px;font-size:13px;font-weight:700}
+.b-row.edit .ok{background:var(--l1);color:#fff}
+.b-row.edit .no{background:#e6eaf1;color:var(--sub)}
+.b-edit{color:var(--l1);font-size:15px;padding:4px 6px}
+
+/* 기록 */
+.rec{margin-top:10px;border-top:1px dashed #e3e7ee;padding-top:10px}
+.rec-row{display:flex;gap:8px;align-items:center}
+.rec-cam{background:#eef1f6;color:var(--ink);font-size:12.5px;font-weight:700;padding:7px 12px;border-radius:9px;cursor:pointer}
+.rec-cam input{display:none}
+.rec-del{font-size:12px;color:var(--warn);padding:6px}
+.rec-img{width:100%;border-radius:10px;margin-top:8px;display:block}
+.rec-memo{margin-top:8px;font-size:13.5px;padding:9px 11px}
+.talk{background:#fff8ea;border:1px solid #f0dcb4;border-radius:10px;padding:10px 12px;margin-top:9px}
+.talk b{display:block;font-size:12px;color:#8a5b12;margin-bottom:4px}
+.talk span{font-size:13.5px;line-height:1.6;color:#4a3a1c}
+.alb{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.alb figure{margin:0}
+.alb img{width:100%;border-radius:10px;display:block}
+.alb figcaption{font-size:11.5px;color:var(--sub);margin-top:4px;line-height:1.4}
+.memo-list{margin-top:10px}
+.memo-list div{padding:9px 0;border-bottom:1px solid #f0f2f6;font-size:13.5px}
+.memo-list b{display:block;font-size:12px;color:var(--l1);margin-bottom:2px}
+
 /* 공부 */
 .st-card{padding:0;overflow:hidden}
 .st-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 15px;cursor:pointer}
@@ -287,6 +318,14 @@ pre.summary{white-space:pre-wrap;background:#f6f8fb;border-radius:10px;padding:1
       <button class="btn ghost" onclick="makeSummary()">요약 글 만들기</button>
       <pre class="summary" id="sumText" style="display:none"></pre>
     </div>
+    <div class="sec">
+      <h3>우리 가족 한 줄 기록</h3>
+      <div class="memo-list" id="memoList"></div>
+    </div>
+    <div class="sec">
+      <h3>여행 앨범 <small>방문지에서 찍은 사진</small></h3>
+      <div class="alb" id="album"></div>
+    </div>
   </div>
 </main>
 
@@ -379,6 +418,22 @@ const DAYS = [
  ]}
 ];
 
+
+
+/* ══════════ 저녁에 나눌 이야기 ══════════ */
+const TALK={
+ war:'전쟁기념관에서 본 무기 중에 제일 무섭게 느껴진 건 뭐였어? 왜 그렇게 느꼈을까?',
+ museum:'반가사유상은 무슨 생각을 하고 있는 얼굴이었을까? 네가 그 자리에 앉는다면 무슨 생각을 하겠어?',
+ palace:'경복궁이 273년 동안 비어 있었대. 그동안 이 넓은 터는 어떤 모습이었을까?',
+ guard:'수문장이 사람을 잘못 들여보내면 어떤 일이 생겼을까? 지금으로 치면 어떤 직업과 비슷할까?',
+ gogung:'순종 임금은 가마 대신 자동차를 탔어. 그때 사람들은 그 장면을 보고 무슨 생각을 했을까?',
+ science:'오늘 체험한 것 중에 하나를 골라, 왜 그렇게 되는지 아빠·엄마한테 설명해 줄래?',
+ prison:'유관순은 열여덟 살이었어. 지금 네 나이에서 몇 년 뒤일까? 그 나이에 그런 결심을 한다는 건 어떤 걸까?',
+ sky:'555m 위에서 내려다본 서울은 어떤 모양이었어? 지도에서 보던 것과 뭐가 달랐어?',
+ aqua:'수조 안 동물들에게 그 공간이 충분해 보였어? 왜 그렇게 생각해?',
+ namsan:'옛날에는 이 자리에서 불과 연기로 소식을 전했대. 지금 우리가 쓰는 방법과 뭐가 다를까?',
+ avia:'안창남이 하늘을 나는 걸 보고 사람들이 왜 그렇게 감격했을까? 그때 조선은 어떤 상황이었지?'
+};
 
 /* ══════════ 용어 사전 링크 ══════════ */
 /* 값이 있으면 그 문서명으로, 없으면 용어 그대로 검색 */
@@ -552,12 +607,12 @@ const DEADLINES = [];
 DAYS.forEach((d,di)=>d.items.forEach(it=>{ if(it.dl) DEADLINES.push({dt:new Date(it.dl),label:it.dlLabel,id:it.id}); }));
 
 /* ══════════ 상태 & 공유 저장 ══════════ */
-let user='가족', day=0, tab='timeline';
+let user='가족', day=0, tab='timeline', editId=null;
 const USERS=['가족','아빠','엄마','서준','서우'];
 function cycleUser(){user=USERS[(USERS.indexOf(user)+1)%USERS.length];document.getElementById('userBadge').textContent='👤 '+user;}
-let S={checks:{},budget:[],plan:{namsan:'rest',avia:'go'},resv:{},info:{},roles:{},read:{},open:{}};
+let S={checks:{},budget:[],plan:{namsan:'rest',avia:'go'},resv:{},info:{},roles:{},read:{},open:{},rec:{}};
 let storageOK=true;
-const KEYS=['checks','budget','plan','resv','info','roles','read'];
+const KEYS=['checks','budget','plan','resv','info','roles','read','rec'];
 
 /* 이 기기에 저장 (localStorage) — 로그인 불필요, 기기별 독립 기록 */
 async function loadAll(showSync){
@@ -675,6 +730,7 @@ function visitHTML(it,nowId){
       <button class="chk" onclick="toggleCheck('${it.id}')">✓</button>
     </div>
     ${ITEM_STUDY[it.id]?`<button class="mbtn a-study" onclick="toggleInline('${it.id}','${ITEM_STUDY[it.id]}',this)">📖 알아보기</button><div class="study-box" id="sb-${it.id}"></div>`:''}
+    ${c&&(ITEM_STUDY[it.id]||it.type==='mission')?recHTML(it.id,ITEM_STUDY[it.id]):''}
     </div></div>`;
 }
 function moveHTML(it){
@@ -735,6 +791,37 @@ function updateHeader(){
 }
 
 
+
+/* ══════════ 기록(사진·한 줄) ══════════ */
+function recHTML(id,k){
+  const r=S.rec[id]||{};
+  return `<div class="rec">
+    <div class="rec-row">
+      <label class="rec-cam">📷 사진<input type="file" accept="image/*" onchange="attachRec('${id}',this)"></label>
+      ${r.img?`<button class="rec-del" onclick="delRecImg('${id}')">사진 지우기</button>`:''}
+    </div>
+    ${r.img?`<img class="rec-img" src="${r.img}">`:''}
+    <input class="rec-memo" placeholder="가장 기억에 남는 것 한 줄" value="${(r.memo||'').replace(/"/g,'&quot;')}" onchange="setRecMemo('${id}',this.value)">
+    ${TALK[k]?`<div class="talk"><b>💬 오늘 저녁에 이야기해 볼 것</b><span>${TALK[k]}</span></div>`:''}
+  </div>`;
+}
+function attachRec(id,input){
+  const f=input.files[0]; if(!f)return;
+  const img=new Image(), rd=new FileReader();
+  rd.onload=e=>{img.src=e.target.result};
+  img.onload=async()=>{
+    const cv=document.createElement('canvas'); const sc=Math.min(1,900/img.width);
+    cv.width=img.width*sc; cv.height=img.height*sc;
+    cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+    const data=cv.toDataURL('image/jpeg',0.55);
+    if(data.length>1200000){alert('사진이 너무 큽니다. 다시 찍어 주세요.');return}
+    S.rec[id]=S.rec[id]||{}; S.rec[id].img=data; await save('rec'); renderTimeline();
+  };
+  rd.readAsDataURL(f);
+}
+async function delRecImg(id){ if(S.rec[id]) delete S.rec[id].img; await save('rec'); renderTimeline(); }
+async function setRecMemo(id,v){ S.rec[id]=S.rec[id]||{}; S.rec[id].memo=v; await save('rec'); renderStats(); }
+
 /* ══════════ 공부 탭 ══════════ */
 function studyBodyHTML(k){
   const d=STUDY[k]; const used=new Set();
@@ -786,7 +873,18 @@ async function addBudget(){
   document.getElementById('bAmt').value='';document.getElementById('bMemo').value='';
   renderBudget(); await save('budget');
 }
-async function delBudget(id){ S.budget=S.budget.filter(b=>b.id!==id); renderBudget(); await save('budget'); }
+function startEdit(id){ editId=id; renderBudget(); }
+function cancelEdit(){ editId=null; renderBudget(); }
+async function saveEdit(id){
+  const amt=+document.getElementById('e-amt').value;
+  if(!amt){alert('금액을 입력해 주세요');return}
+  const b=S.budget.find(x=>x.id===id); if(!b)return;
+  b.cat=document.getElementById('e-cat').value;
+  b.amt=amt;
+  b.memo=document.getElementById('e-memo').value;
+  editId=null; renderBudget(); renderStats(); await save('budget');
+}
+async function delBudget(id){ if(editId===id)editId=null; S.budget=S.budget.filter(b=>b.id!==id); renderBudget(); renderStats(); await save('budget'); }
 function renderBudget(){
   document.getElementById('prepaidList').innerHTML=
     PREPAID.map(x=>`<div class="b-row"><span>${x.label}</span><span><span class="money">${fmt(x.amt)}</span>원</span></div>`).join('')
@@ -800,9 +898,19 @@ function renderBudget(){
   g.style.width=pct+'%'; g.classList.toggle('over',tr>80000);
   document.getElementById('gTransitLab').textContent=fmt(tr)+'원'+(tr>80000?' (초과!)':'');
   document.getElementById('grandTotal').textContent=fmt(PREPAID_SUM+S.budget.reduce((a,b)=>a+b.amt,0));
+  const CATS=['교통','식사','입장','기타'];
   document.getElementById('bList').innerHTML=S.budget.slice().reverse().map(b=>
-    `<div class="b-row"><span><span class="cat">${b.cat}</span>${b.memo||'-'} <small style="color:var(--sub)">· ${b.day} ${b.by}</small></span>
-     <span><span class="money">${fmt(b.amt)}</span>원 <button class="del" onclick="delBudget(${b.id})">✕</button></span></div>`).join('')
+    b.id===editId
+    ? `<div class="b-row edit">
+        <div class="er">
+          <select id="e-cat">${CATS.map(c=>`<option ${b.cat===c?'selected':''}>${c}</option>`).join('')}</select>
+          <input id="e-amt" type="number" inputmode="numeric" value="${b.amt}">
+        </div>
+        <input class="memo" id="e-memo" placeholder="메모" value="${(b.memo||'').replace(/"/g,'&quot;')}">
+        <div class="btns"><button class="ok" onclick="saveEdit(${b.id})">저장</button><button class="no" onclick="cancelEdit()">취소</button></div>
+       </div>`
+    : `<div class="b-row"><span><span class="cat">${b.cat}</span>${b.memo||'-'} <small style="color:var(--sub)">· ${b.day} ${b.by}</small></span>
+     <span><span class="money">${fmt(b.amt)}</span>원 <button class="b-edit" onclick="startEdit(${b.id})">✎</button><button class="del" onclick="delBudget(${b.id})">✕</button></span></div>`).join('')
     ||'<p class="note">아직 기록이 없어요. 첫 지출부터 적어보세요.</p>';
 }
 
@@ -848,6 +956,16 @@ function renderStats(){
   document.getElementById('stVisit').textContent=vis.filter(i=>S.checks[i.id]).length+'/'+vis.length;
   document.getElementById('stMission').textContent=mis.filter(i=>S.checks[i.id]).length+'/'+mis.length;
   document.getElementById('stSpend').textContent=fmt(PREPAID_SUM+S.budget.reduce((a,b)=>a+b.amt,0));
+  const titleOf=id=>{for(const d of DAYS){for(const it of d.items){if(it.id===id)return it.title;}}
+    return ({'v-nam':'남산서울타워','v-avia':'국립항공박물관','v-rest':'숙소 휴식'})[id]||id;};
+  const memos=Object.entries(S.rec).filter(([,r])=>r.memo);
+  document.getElementById('memoList').innerHTML = memos.length
+    ? memos.map(([id,r])=>`<div><b>${titleOf(id)}</b>${r.memo}</div>`).join('')
+    : '<p class="note">방문지 카드를 완료 체크하면 한 줄 기록을 남길 수 있어요.</p>';
+  const imgs=Object.entries(S.rec).filter(([,r])=>r.img);
+  document.getElementById('album').innerHTML = imgs.length
+    ? imgs.map(([id,r])=>`<figure><img src="${r.img}"><figcaption>${titleOf(id)}</figcaption></figure>`).join('')
+    : '<p class="note" style="grid-column:1/-1">아직 사진이 없어요.</p>';
 }
 function makeSummary(){
   renderStats();
@@ -855,7 +973,8 @@ function makeSummary(){
   const doneList=items.filter(i=>S.checks[i.id]).map(i=>`· ${i.title} (${S.checks[i.id].by})`).join('\n');
   const spend=PREPAID_SUM+S.budget.reduce((a,b)=>a+b.amt,0);
   const tr=S.budget.filter(b=>b.cat==='교통').reduce((a,b)=>a+b.amt,0);
-  const txt=`🚄 서울 가족여행 요약 (10/2~10/4)\n\n완료한 일정:\n${doneList||'· (아직 없음)'}\n\n총 지출 ${fmt(spend)}원 (교통 ${fmt(tr)}원 — 목표 8만원 ${tr<=80000?'달성 ✅':'초과'})\n\n수고했어, 우리 가족! 🎉`;
+  const memoTxt=Object.entries(S.rec).filter(([,r])=>r.memo).map(([id,r])=>`· ${r.memo}`).join('\n');
+  const txt=`🚄 서울 가족여행 요약 (10/2~10/4)\n\n완료한 일정:\n${doneList||'· (아직 없음)'}\n\n기억에 남는 것:\n${memoTxt||'· (기록 없음)'}\n\n총 지출 ${fmt(spend)}원 (교통 ${fmt(tr)}원 — 목표 8만원 ${tr<=80000?'달성 ✅':'초과'})\n\n수고했어, 우리 가족! 🎉`;
   const el=document.getElementById('sumText'); el.style.display='block'; el.textContent=txt;
   if(navigator.clipboard) navigator.clipboard.writeText(txt).then(()=>sync('요약 복사됨')).catch(()=>{});
 }
