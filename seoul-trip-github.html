@@ -96,7 +96,7 @@ main{max-width:560px;margin:0 auto;padding:14px 14px 24px}
 
 /* ── 하단 탭 ─────────────────────────── */
 nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e3e7ee;display:flex;z-index:40;padding-bottom:env(safe-area-inset-bottom)}
-nav button{flex:1;padding:10px 2px 8px;font-size:11px;color:var(--sub);display:flex;flex-direction:column;gap:2px;align-items:center}
+nav button{flex:1;padding:10px 1px 8px;font-size:10px;color:var(--sub);display:flex;flex-direction:column;gap:2px;align-items:center}
 nav button .ic{font-size:20px}
 nav button.on{color:var(--l1);font-weight:700}
 
@@ -133,6 +133,29 @@ pre.summary{white-space:pre-wrap;background:#f6f8fb;border-radius:10px;padding:1
 
 .offline{background:#fdf1dc;color:#8a5b12;font-size:12px;padding:8px 12px;border-radius:10px;margin-bottom:10px;display:none}
 .offline.show{display:block}
+
+/* 공부 */
+.st-card{padding:0;overflow:hidden}
+.st-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 15px;cursor:pointer}
+.st-title{font-weight:800;font-size:16px}
+.st-one{font-size:12.5px;color:var(--sub);margin-top:3px;line-height:1.4}
+.st-mark{font-size:18px;color:#c3cad6;flex-shrink:0}
+.st-card.read .st-mark{color:var(--done)}
+.st-card.read .st-title::before{content:'✓ ';color:var(--done)}
+.st-body{padding:0 15px 15px;border-top:1px solid #eef1f6}
+.st-body h4{font-size:14px;margin:14px 0 5px;color:var(--l1)}
+.st-body p{font-size:14px;line-height:1.72;color:#2b3243}
+.st-chk{margin:4px 0 0 18px}
+.st-chk li{font-size:13.5px;line-height:1.7;color:#2b3243}
+.st-q{background:#f6f8fb;border-radius:10px;padding:10px 12px;margin-top:7px;cursor:pointer;font-size:13.5px}
+.st-q b{font-weight:700;display:block}
+.st-q span{display:none;margin-top:6px;color:var(--done);font-weight:700}
+.st-q.open span{display:block}
+.st-prog{height:9px;background:#e6eaf1;border-radius:99px;overflow:hidden;margin:8px 0 5px}
+.st-prog i{display:block;height:100%;background:var(--l1);border-radius:99px;transition:.3s}
+.a-study{background:#fff;color:var(--l1);box-shadow:0 1px 3px rgba(20,30,60,.12);font-size:12.5px;font-weight:700;padding:7px 11px;border-radius:9px;margin-top:9px}
+.study-box{margin-top:4px}
+
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -230,6 +253,17 @@ pre.summary{white-space:pre-wrap;background:#f6f8fb;border-radius:10px;padding:1
     </div>
   </div>
 
+  <!-- 공부 -->
+  <div class="sheet" id="tab-study">
+    <div class="sec">
+      <h3>여행 전 공부 <small>방문지 11곳</small></h3>
+      <div class="st-prog"><i id="stProg"></i></div>
+      <div class="g-lab"><span id="stProgLab">11곳 중 0곳 읽음</span><span>탭하면 펼쳐져요</span></div>
+      <p class="note">각 장소를 눌러 읽어보세요. 여행 당일에는 일정 화면의 「📖 알아보기」 버튼으로 같은 내용을 바로 볼 수 있어요.</p>
+    </div>
+    <div id="studyList"></div>
+  </div>
+
   <!-- 요약 -->
   <div class="sheet" id="tab-sum">
     <div class="sec">
@@ -250,6 +284,7 @@ pre.summary{white-space:pre-wrap;background:#f6f8fb;border-radius:10px;padding:1
   <button data-t="budget" onclick="setTab('budget',this)"><span class="ic">💰</span>예산</button>
   <button data-t="resv" onclick="setTab('resv',this)"><span class="ic">🎫</span>예약</button>
   <button data-t="info" onclick="setTab('info',this)"><span class="ic">🏠</span>정보</button>
+  <button data-t="study" onclick="setTab('study',this)"><span class="ic">📖</span>공부</button>
   <button data-t="sum" onclick="setTab('sum',this)"><span class="ic">📔</span>요약</button>
 </nav>
 
@@ -332,6 +367,125 @@ const DAYS = [
   {id:'f2',t:'19:05',type:'flight',title:'김포 출발 ✈️',sub:'진에어 AQSL7D · 제주 20:15 도착 · 17:20 짐 찾고 수속',dl:'2026-10-04T17:20',dlLabel:'공항 수속 시작'}
  ]}
 ];
+
+/* ══════════ 방문지 학습 자료 (중학생 수준) ══════════ */
+const STUDY = {
+ war:{title:'전쟁기념관',one:'1994년 문을 연, 우리나라 전쟁의 역사를 한자리에 모은 박물관',
+  sec:[
+   {h:'어떤 곳인가',p:'1994년 6월 10일 개관(開館)했다. 서울 용산구 이태원로 29에 있다. 이 자리는 원래 일제강점기에 일본군 보병 제79연대 병영(兵營)이 있던 곳이고, 광복 후에는 대한민국 육군본부(陸軍本部)가 있었다. 1989년 육군본부가 충청남도 계룡대로 옮겨가면서 그 자리에 전쟁기념관을 세웠다. 지금은 이 일대 전체가 옛 용산 미군기지 땅과 함께 \u2018용산공원\u2019 조성지구에 들어가 있다.'},
+   {h:'전시는 어떻게 나뉘나',p:'크게 여섯 부분이다. ①호국추모실 ②전쟁역사실(선사시대부터 조선시대까지) ③6\u00b725전쟁실 ④해외파병실 ⑤국군발전실 ⑥대형장비실과 옥외전시장. 안쪽으로 들어가면서 시대 순으로 보게 되어 있다.'},
+   {h:'거북선과 이순신',p:'전쟁역사실에 거북선(龜船) 모형이 있다. 거북선은 임진왜란(壬辰倭亂, 1592~1598) 때 이순신(李舜臣, 1545~1598) 장군이 이끈 조선 수군(水軍)의 돌격선이다. 배 위를 판자로 덮고 쇠못을 박아 적이 뛰어들지 못하게 했고, 뱃머리 용머리에서 대포를 쏘았다. 1592년 한산도대첩(閑山島大捷)에서 학익진(鶴翼陣) 전법으로 일본 수군을 크게 이겼다.'},
+   {h:'6\u00b725전쟁',p:'1950년 6월 25일 북한군의 남침으로 시작되어 1953년 7월 27일 정전협정(停戰協定)으로 멈췄다. \u2018끝났다\u2019가 아니라 \u2018멈췄다\u2019가 정확한 표현이다. 평화조약이 아니라 싸움을 잠시 중단하는 협정이기 때문이다. 기념관 바깥 회랑에는 전사자(戰死者) 이름을 새긴 명비(銘碑)가 길게 늘어서 있다. 이름 하나하나가 실제로 돌아오지 못한 사람이다.'},
+   {h:'바깥 전시장',p:'실물 전차, 전투기, 함정이 놓여 있다. 사진으로만 보던 무기의 진짜 크기를 느낄 수 있는 곳이라 실내보다 여기가 더 기억에 남는 사람이 많다.'}
+  ],
+  chk:['전쟁역사실에서 거북선 모형 찾기','\u2018형제의 상\u2019 조각이 무엇을 표현한 것인지 읽어보기','전사자 명비에서 우리 성씨(姓氏) 찾아보기','옥외전시장 항공기 이름 3개 적어오기'],
+  quiz:[{q:'전쟁기념관은 몇 년에 문을 열었나?',a:'1994년'},{q:'이 자리에 원래 있던 우리 군 기관은?',a:'육군본부 (1989년 계룡대로 이전)'},{q:'6\u00b725전쟁이 멈춘 해와 그 협정의 이름은?',a:'1953년, 정전협정'}]},
+
+ museum:{title:'국립중앙박물관',one:'우리나라에서 가장 큰 박물관, 2005년 용산으로 옮겨 왔다',
+  sec:[
+   {h:'어떤 곳인가',p:'1945년 광복 직후 조선총독부박물관을 넘겨받아 문을 열었다. 이후 경복궁 등 여러 곳을 옮겨 다니다가 2005년 10월 지금의 용산 자리로 옮겨 왔다. 소장 유물이 40만 점이 넘고, 건물 규모로는 세계에서 손꼽히는 박물관이다.'},
+   {h:'전시관 구성',p:'1층 선사\u00b7고대관과 중\u00b7근세관, 2층 서화관과 기증관, 3층 조각\u00b7공예관과 세계문화관으로 되어 있다. 구석기시대 주먹도끼부터 조선시대 그림까지 한 건물 안에서 시대 순으로 볼 수 있다.'},
+   {h:'사유의 방',p:'2층에 있는 특별한 전시실이다. 국보로 지정된 금동미륵보살반가사유상(金銅彌勒菩薩半跏思惟像) 두 점만 어두운 방에 나란히 놓여 있다. \u2018반가(半跏)\u2019는 한쪽 다리를 다른 쪽 무릎에 올린 자세, \u2018사유(思惟)\u2019는 깊이 생각한다는 뜻이다. 하나는 6세기 후반, 다른 하나는 7세기 전반에 만들어졌다. 삼국시대 금속공예 기술이 어느 정도였는지 보여주는 대표작이다.'},
+   {h:'경천사지 십층석탑',p:'박물관에 들어서면 가운데 큰 홀에 우뚝 선 흰 대리석 탑이 있다. 1348년 고려 충목왕(忠穆王) 때 경기도 개풍군 경천사(敬天寺)에 세워진 탑이다. 일제강점기에 일본으로 몰래 반출되었다가 돌려받았고, 지금은 실내에 두어 보호하고 있다. 높이가 13.5m라 건물 3층 높이까지 올라간다.'},
+   {h:'어린이박물관',p:'같은 건물 안에 있는 별도 공간이다. 유물을 직접 만지고 조작해 보는 체험 중심이라 전시관과는 성격이 다르다. 회차(回次) 예약을 해야 들어갈 수 있다.'}
+  ],
+  chk:['사유의 방 두 반가사유상의 표정과 옷 주름 차이 비교하기','경천사지 십층석탑을 1층과 2층에서 각각 올려다보기','신라 금관에 달린 장식이 무슨 모양인지 살펴보기','내가 가장 오래됐다고 생각한 유물의 연대 확인하기'],
+  quiz:[{q:'지금의 용산 건물로 옮겨온 해는?',a:'2005년'},{q:'\u2018사유(思惟)\u2019는 무슨 뜻인가?',a:'깊이 생각한다는 뜻'},{q:'경천사지 십층석탑은 어느 시대 것인가?',a:'고려시대 (1348년, 충목왕 때)'}]},
+
+ palace:{title:'경복궁',one:'1395년 조선이 세운 첫 번째 궁궐, 임진왜란으로 불탔다가 1867년 다시 세웠다',
+  sec:[
+   {h:'이름의 뜻',p:'1395년(태조 4년) 조선을 세운 뒤 지은 첫 궁궐이다. 이름은 정도전(鄭道傳)이 지었는데, 중국 고전 『시경(詩經)』의 \u2018군자만년 개이경복(君子萬年 介爾景福)\u2019에서 따왔다. \u2018큰 복을 누리라\u2019는 뜻이다. 경복궁은 조선의 법궁(法宮), 즉 으뜸 궁궐이었다.'},
+   {h:'불타고, 273년 비어 있었다',p:'1592년 임진왜란 때 불에 타 사라졌다. 그 뒤 무려 273년 동안 폐허로 남아 있었다. 조선의 왕들은 창덕궁을 주로 썼다. 경복궁이 다시 선 것은 1867년(고종 4년), 고종의 아버지 흥선대원군(興宣大院君)이 왕실의 권위를 세우려고 대대적으로 중건(重建)하면서였다.'},
+   {h:'다시 수난을 겪다',p:'1895년 이곳 건청궁에서 명성황후(明成皇后)가 일본인들에게 시해당하는 을미사변(乙未事變)이 일어났고, 이듬해 고종은 러시아 공사관으로 몸을 피했다(아관파천). 일제강점기에는 궁궐 건물을 대부분 헐고 그 앞에 조선총독부 청사를 세웠다. 이 건물은 1995년에 철거되었고, 지금도 경복궁 복원 공사가 이어지고 있다.'},
+   {h:'무엇을 볼 것인가',p:'근정전(勤政殿)은 왕이 신하들의 인사를 받고 국가 행사를 치르던 정전(正殿)으로 국보다. 앞마당에 품계석(品階石)이 좌우로 늘어서 있는데, 신하들이 자기 품계에 맞춰 서던 자리 표시다. 경회루(慶會樓)는 연못 위에 세운 누각으로 사신을 맞고 잔치를 열던 곳이다. 기둥이 48개인데 바깥은 네모, 안쪽은 둥근 기둥이다. 하늘은 둥글고 땅은 네모나다는 옛 생각(天圓地方)을 담았다.'}
+  ],
+  chk:['근정전 앞 품계석에서 \u2018정일품\u2019 찾기','지붕 처마 끝에 늘어선 잡상(雜像) 개수 세기','경회루 바깥 기둥과 안쪽 기둥 모양 비교하기','왕비의 공간 교태전 뒤 아미산 굴뚝 무늬 보기'],
+  quiz:[{q:'경복궁을 처음 지은 해와 이름을 지은 사람은?',a:'1395년, 정도전'},{q:'몇 년에 누가 다시 세웠나?',a:'1867년, 흥선대원군'},{q:'경회루 기둥이 바깥은 네모, 안쪽은 둥근 이유는?',a:'하늘은 둥글고 땅은 네모나다는 천원지방(天圓地方) 사상'}]},
+
+ guard:{title:'수문장 교대의식',one:'궁궐 문을 지키던 조선시대 군사 의식을 되살린 행사',
+  sec:[
+   {h:'수문장이 하던 일',p:'수문장(守門將)은 조선시대에 궁성문(宮城門)을 지키고 여닫는 일을 맡은 무관(武官)이다. 정해진 시각에 문을 열고 닫았으며, 드나드는 사람의 신분을 확인했다. 아무나 궁궐에 들어갈 수 없었기 때문에 이 자리는 중요했다. 『경국대전(經國大典)』 같은 조선의 법전과 여러 기록에 수문장의 임무와 교대 절차가 남아 있다.'},
+   {h:'언제부터 다시 하나',p:'조선이 끝나면서 사라졌던 이 의식은 1996년에 옛 기록을 바탕으로 복원되어 다시 열리기 시작했다. 실제 조선시대 복식과 무기, 악기를 고증해 재현한 것이다.'},
+   {h:'무엇을 보게 되나',p:'취타대(吹打隊)가 나발\u00b7태평소\u00b7북\u00b7징을 연주하며 앞장서고, 수문장과 종사관(從事官), 갑사(甲士)들이 뒤따른다. 교대할 두 조가 서로 마주 서서 암호를 확인하고, 문을 지킬 책임을 넘겨받는 절차를 밟는다. 옷 색깔이 다른 이유는 맡은 역할과 계급이 다르기 때문이다.'}
+  ],
+  chk:['취타대가 쓰는 악기 3가지 이름 알아오기','수문장과 갑사의 옷 색깔 차이 관찰하기','교대할 때 서로 무엇을 주고받는지 보기'],
+  quiz:[{q:'수문장은 무슨 일을 하던 사람인가?',a:'궁성문을 지키고 여닫으며 출입자를 확인하던 무관'},{q:'이 의식이 다시 재현되기 시작한 해는?',a:'1996년'}]},
+
+ gogung:{title:'국립고궁박물관',one:'2005년 개관, 조선 왕실과 대한제국의 유물을 모은 박물관',
+  sec:[
+   {h:'어떤 곳인가',p:'2005년 8월 15일 광복절에 문을 열었다. 경복궁 흥례문 광장 서쪽에 있어 경복궁을 본 뒤 바로 이어서 볼 수 있다. 조선 왕실과 대한제국(大韓帝國) 시기의 유물 4만여 점을 소장하고 있다. 입장료는 없다.'},
+   {h:'전시 구성',p:'\u2018조선의 국왕\u2019, \u2018왕실의 생활\u2019, \u2018궁중서화\u2019, \u2018왕실의례\u2019, \u2018과학문화\u2019, \u2018대한제국\u2019 등으로 나뉜다. 궁궐 건물만 보고 나오면 알 수 없는 \u2018그 안에서 어떻게 살았는가\u2019를 채워주는 곳이다.'},
+   {h:'꼭 볼 것 \u2014 어차',p:'지하층에 순종(純宗) 황제와 순정효황후가 탔던 자동차 두 대가 전시되어 있다. 1910년대에 만들어진 것으로, 우리나라에 들어온 가장 이른 시기의 자동차에 속한다. 조선의 마지막 임금이 가마가 아니라 자동차를 탔다는 사실 자체가 그 시대의 급격한 변화를 보여준다.'},
+   {h:'과학문화실',p:'물시계인 자격루(自擊漏)의 남은 부분, 별자리를 새긴 천상열차분야지도(天象列次分野之圖) 등이 있다. 세종(世宗) 시대 과학 기술이 어떤 수준이었는지 실물로 확인할 수 있다.'},
+   {h:'일월오봉도',p:'왕이 앉는 자리 뒤에 늘 세워두던 병풍 그림이다. 해와 달, 다섯 봉우리, 소나무, 폭포가 그려져 있다. 해와 달은 임금과 왕비를, 다섯 봉우리는 나라의 땅을 뜻한다는 해석이 있다. 경복궁 근정전에서 본 그것과 같은 그림이다.'}
+  ],
+  chk:['순종의 어차(자동차) 두 대 비교해 보기','자격루가 어떻게 시간을 알렸는지 설명 읽기','일월오봉도에서 해와 달 찾기','경복궁에서 본 것과 같은 물건이 있는지 찾아보기'],
+  quiz:[{q:'국립고궁박물관은 몇 년에 개관했나?',a:'2005년'},{q:'전시된 어차(자동차)의 주인은?',a:'순종 황제와 순정효황후'},{q:'일월오봉도에서 해와 달이 상징하는 것은?',a:'임금과 왕비'}]},
+
+ science:{title:'국립어린이과학관',one:'2017년 문을 연 우리나라 최초의 어린이 전용 국립과학관',
+  sec:[
+   {h:'긴 역사를 가진 건물',p:'이 과학관의 뿌리는 1927년 일제가 남산에 세운 은사기념과학관까지 올라간다. 광복 후 국립과학박물관으로 이름을 바꿨으나 6\u00b725전쟁 때 폭격으로 불탔다. 1962년 종로구 와룡동, 원래 창경궁의 후원(後園)이던 자리에 다시 지었다. 1990년 국립중앙과학관이 대전으로 옮겨가면서 이곳은 국립서울과학관이 되었고, 리모델링을 거쳐 2017년 12월 21일 \u2018국립어린이과학관\u2019으로 다시 문을 열었다. 우리나라 최초의 어린이 전용 국립과학관이다.'},
+   {h:'창경궁과 이어져 있다',p:'원래 창경궁 후원 땅이었기 때문에 지금도 \u2018과학문\u2019이라는 문으로 창경궁과 연결되어 있다. 궁궐 옆에 과학관이 있는 이유가 여기 있다.'},
+   {h:'세 개의 놀이터',p:'전시가 \u2018감각놀이터\u2019, \u2018상상놀이터\u2019, \u2018창작놀이터\u2019 세 구역으로 나뉜다. 유리 너머로 보기만 하는 전시가 아니라 직접 만지고 움직여 보면서 과학 원리를 익히도록 만들어져 있다.'},
+   {h:'천체투영관',p:'돔 천장에 별자리를 쏘아 보여주는 공간이다. 상설전시관에 먼저 들어간 뒤 이용할 수 있고, 상영이 시작되면 들어갈 수 없으니 시간을 지켜야 한다.'}
+  ],
+  chk:['세 놀이터 중 가장 재미있던 곳과 그 이유 말하기','체험물 하나를 골라 어떤 과학 원리인지 설명해 보기','창경궁과 이어진 \u2018과학문\u2019 찾아보기'],
+  quiz:[{q:'국립어린이과학관이 다시 문을 연 해는?',a:'2017년 12월'},{q:'이 자리는 원래 어느 궁궐의 무엇이었나?',a:'창경궁의 후원'},{q:'전시 놀이터 세 곳의 이름은?',a:'감각놀이터, 상상놀이터, 창작놀이터'}]},
+
+ prison:{title:'서대문형무소역사관',one:'1908년 일제가 세운 감옥, 지금은 독립운동을 기억하는 역사관',
+  sec:[
+   {h:'어떻게 생겨났나',p:'1908년 10월 21일 \u2018경성감옥(京城監獄)\u2019이라는 이름으로 문을 열었다. 일제가 우리 땅에 세운 최초의 근대식 감옥이다. 1912년 서대문감옥, 1923년 서대문형무소로 이름이 바뀌었다. 일제강점기 내내 수많은 독립운동가가 이곳에 갇혔다.'},
+   {h:'광복 이후에도 쓰였다',p:'1945년 광복 뒤에는 서울형무소, 1961년 서울교도소, 1967년 서울구치소로 이름이 계속 바뀌며 실제 교도소로 사용되었다. 1987년 경기도 의왕시로 옮겨간 뒤 건물을 보존해 1998년 11월 5일 역사관으로 문을 열었다.'},
+   {h:'기억해야 할 사람들',p:'유관순(柳寬順, 1902~1920)은 1919년 3\u00b71운동 때 고향 천안 아우내 장터에서 만세운동을 이끌다 붙잡혀 이곳에 갇혔고, 1920년 9월 28일 옥중에서 순국했다. 만 열여덟이었다. 강우규(姜宇奎) 의사, 백범 김구(金九) 선생 등도 이곳에 수감된 적이 있다.'},
+   {h:'무엇을 보게 되나',p:'붉은 벽돌 옥사(獄舍), 좁은 독방, 사형장과 그 옆 \u2018통곡의 미루나무\u2019, 시신을 몰래 내보내던 시구문(屍口門), 좁은 부채꼴 공간에 갇힌 채 운동을 시켰던 격벽장(隔壁場)이 남아 있다. 유관순이 갇혔던 여옥사 8호 감방도 복원되어 있다. 무섭게 느껴질 수 있지만, 실제로 있었던 일을 그대로 남겨둔 것이 이곳의 목적이다.'}
+  ],
+  chk:['여옥사 8호 감방의 크기가 우리 집 어디만 한지 견주어 보기','격벽장이 왜 그런 모양인지 설명 읽기','수감자 카드에서 가장 어린 사람의 나이 찾아보기','통곡의 미루나무 이름의 유래 알아보기'],
+  quiz:[{q:'처음 문을 열었을 때 이름과 연도는?',a:'경성감옥, 1908년'},{q:'유관순이 순국한 해와 나이는?',a:'1920년, 만 18세'},{q:'역사관으로 문을 연 해는?',a:'1998년'}]},
+
+ sky:{title:'서울스카이 (롯데월드타워)',one:'123층 555m, 우리나라에서 가장 높은 건물의 전망대',
+  sec:[
+   {h:'얼마나 높은가',p:'롯데월드타워는 지상 123층, 높이 555m다. 우리나라에서 가장 높은 건물이고 세계에서도 다섯 손가락 안에 든다. 전망대 \u2018서울스카이\u2019는 117층부터 123층까지이며 2017년 4월 3일 문을 열었다.'},
+   {h:'1분 만에 올라가는 엘리베이터',p:'전망대로 가는 엘리베이터는 \u2018스카이셔틀\u2019이라 부른다. 분속(分速) 600m로 움직여 1분 안에 500m를 올라간다. 세계에서 가장 빠른 엘리베이터 가운데 하나다. 올라가는 동안 벽면에 영상이 나온다.'},
+   {h:'유리 바닥과 흔들림',p:'118층에는 바닥이 유리로 된 \u2018스카이데크\u2019가 있다. 발밑으로 478m 아래가 그대로 보인다. 이렇게 높은 건물은 바람에 조금씩 흔들리도록 설계한다. 뻣뻣하게 버티는 것보다 흔들리며 힘을 흘려보내는 편이 안전하기 때문이다. 지진과 강풍을 견디도록 특별한 구조로 지어졌다.'},
+   {h:'무엇이 보이나',p:'맑은 날에는 한강 다리들, 남산서울타워, 올림픽공원, 그리고 멀리 북한산까지 보인다. 지도에서만 보던 서울의 모양을 한눈에 확인할 수 있다.'}
+  ],
+  chk:['한강에 놓인 다리를 세어 보고 이름 3개 알아내기','남산서울타워 찾기','우리가 묵는 천호동 방향 찾아보기','유리 바닥 위에 서 보기'],
+  quiz:[{q:'롯데월드타워의 층수와 높이는?',a:'123층, 555m'},{q:'전망대 엘리베이터의 속도는?',a:'분속 600m (1분 안에 500m 상승)'},{q:'초고층 건물이 바람에 흔들리도록 짓는 이유는?',a:'힘을 흘려보내야 더 안전하기 때문'}]},
+
+ aqua:{title:'롯데월드 아쿠아리움',one:'2014년 문을 연 도심 대형 수족관',
+  sec:[
+   {h:'어떤 곳인가',p:'2014년 10월 롯데월드몰 지하에 문을 열었다. 여러 구역으로 나뉘어 있고, 강\u00b7바다\u00b7극지방 등 서로 다른 환경에 사는 생물을 차례로 볼 수 있게 배치되어 있다.'},
+   {h:'서식지별 전시',p:'아마존 같은 민물 구역, 산호초 구역, 차가운 극지 구역이 이어진다. 물고기가 사는 물의 온도\u00b7염분\u00b7빛의 양이 구역마다 다르고, 수족관은 그 조건을 인공적으로 만들어 유지한다. 유리 너머의 물이 그냥 물이 아니라는 뜻이다.'},
+   {h:'해저터널',p:'머리 위로 물이 지나가는 터널 구간이 있다. 상어와 가오리가 바로 위를 헤엄쳐 지나간다. 상어는 부레가 없어서 헤엄을 멈추면 가라앉는 종류가 많다. 그래서 계속 움직이는 것이다.'},
+   {h:'생각해 볼 점',p:'수족관은 바다 생물을 가까이서 볼 수 있게 해주지만, 좁은 수조에서 큰 동물을 기르는 것이 옳은지에 대해서는 오래된 논쟁이 있다. 재미있게 보되 \u2018이 동물에게 이 공간이 충분할까\u2019를 한 번 생각해 보면 좋다.'}
+  ],
+  chk:['가장 큰 물고기와 가장 작은 물고기 찾기','해저터널에서 상어가 몇 마리 지나가는지 세기','민물 구역과 바닷물 구역의 생물 차이 관찰하기'],
+  quiz:[{q:'아쿠아리움이 문을 연 해는?',a:'2014년'},{q:'상어가 계속 헤엄치는 이유는?',a:'부레가 없어 멈추면 가라앉는 종류가 많기 때문'}]},
+
+ namsan:{title:'남산서울타워',one:'1975년 세운 방송 송신탑, 1980년부터 시민에게 열렸다',
+  sec:[
+   {h:'원래는 방송탑이었다',p:'1969년 공사를 시작해 1975년 완공되었다. 처음 목적은 관광이 아니라 텔레비전과 라디오 전파를 보내는 송신탑(送信塔)이었다. 일반인에게 전망대를 개방한 것은 1980년 10월부터다.'},
+   {h:'높이의 비밀',p:'탑 자체 높이는 236.7m지만, 남산(해발 243m) 꼭대기에 서 있기 때문에 해수면 기준으로는 약 480m가 된다. 그래서 실제 탑 높이보다 훨씬 높게 느껴진다.'},
+   {h:'봉수대가 있던 자리',p:'남산은 조선시대에 목멱산(木覓山)이라 불렸고, 이곳에 봉수대(烽燧臺)가 있었다. 봉수는 낮에는 연기, 밤에는 불로 소식을 전하던 통신 수단이다. 전국 각지에서 올라온 봉수가 마지막으로 모이는 곳이 바로 남산이었다. 옛날의 통신 시설 자리에 현대의 방송탑이 선 셈이다.'},
+   {h:'조명 색이 바뀐다',p:'타워 조명은 공기 상태에 따라 색이 달라진다. 미세먼지가 적어 공기가 좋은 날에는 파란색으로 빛난다. 멀리서도 오늘 공기가 어떤지 알 수 있게 만든 것이다.'}
+  ],
+  chk:['봉수대 자리 찾아보기','타워 조명이 무슨 색인지 확인하고 공기 상태 맞혀 보기','전망대에서 롯데월드타워 찾기'],
+  quiz:[{q:'남산서울타워를 처음 지은 목적은?',a:'방송 전파를 보내는 송신탑'},{q:'조선시대에 남산에 있던 통신 시설은?',a:'봉수대 (전국 봉수의 종착점)'},{q:'타워 조명이 파란색이면 무슨 뜻인가?',a:'공기가 깨끗하다는 뜻'}]},
+
+ avia:{title:'국립항공박물관',one:'2020년 개관, 우리나라 최초의 항공 전문 국립박물관',
+  sec:[
+   {h:'왜 7월 5일에 열었나',p:'2020년 7월 5일에 개관했다. 이 날짜에는 이유가 있다. 1920년 7월 5일, 대한민국 임시정부가 미국 캘리포니아에 \u2018한인비행학교\u2019를 세웠다. 나라를 빼앗긴 상태에서 비행사를 길러 독립운동에 쓰려 한 것이다. 그로부터 정확히 100년 되는 날에 맞춰 문을 열었다. 건물은 항공기 제트엔진 모양을 본떠 지었고, 김포공항 바로 옆에 있다.'},
+   {h:'안창남과 금강호',p:'안창남(安昌男, 1901~1930)은 우리나라 사람으로는 처음 하늘을 난 비행사다. 1922년 12월 여의도에서 시범비행을 했는데, 여의도와 창덕궁 상공을 나는 그의 모습을 보려고 수만 명이 모였다. 나라를 빼앗긴 조선인들에게 큰 자부심을 준 사건이었다. 그가 몰던 비행기 \u2018금강호\u2019가 실물 크기로 복원되어 1층에 걸려 있다.'},
+   {h:'스탠더드 J-1',p:'한인비행학교에서 훈련기로 쓰던 2인승 복엽기(複葉機, 날개가 위아래 두 겹인 비행기)다. 수직 날개에 태극 문양을 새기고 옆면에 \u2018Korean Aviation Corps\u2019라고 써서 한인의 비행학교임을 분명히 했다.'},
+   {h:'전시 구성',p:'1층 항공역사관, 2층 항공산업관과 실감영상관, 3층 항공생활관으로 되어 있다. 실물 비행기가 16대 전시되어 있는데, 공군의 첫 전투기 F-51 무스탕, 우리 기술로 만든 첫 민항기 KC-100 나라온, 특수비행팀 블랙이글스가 쓰는 T-50B 골든이글 등이 공중에 매달려 있다. 임진왜란 때 정평구가 만들었다고 전하는 하늘을 나는 수레 \u2018비거(飛車)\u2019도 소개되어 있다.'},
+   {h:'체험 프로그램',p:'조종\u00b7관제 체험, 블랙이글스 탑승 체험, 항공레포츠 체험 등이 있다. 인기가 많고 인원이 제한되어 있어 현장에서 바로 못 할 수도 있다.'}
+  ],
+  chk:['안창남의 금강호 찾기','스탠더드 J-1 날개의 태극 문양 확인하기','전시된 비행기 중 우리나라가 직접 만든 것 골라내기','옥상 전망대에서 이착륙하는 비행기 보기'],
+  quiz:[{q:'개관일을 7월 5일로 정한 이유는?',a:'1920년 7월 5일 한인비행학교 개교 100주년이기 때문'},{q:'우리나라 최초의 비행사와 그 비행기 이름은?',a:'안창남, 금강호'},{q:'복엽기(複葉機)란 무엇인가?',a:'날개가 위아래 두 겹으로 된 비행기'}]}
+};
+const STUDY_ORDER=['war','museum','palace','guard','gogung','science','prison','sky','aqua','namsan','avia'];
+const ITEM_STUDY={v1:'war',v2:'museum',v4:'palace',v5:'guard',v6:'gogung',v7:'science',v8:'prison',v10:'sky',v11:'aqua','v-nam':'namsan','v-avia':'avia'};
+
 const LINECOLOR={l5:'#996CAC',l1:'#0052A4',l3:'#EF7C1C',l4:'#00A5DE',l8:'#E6186C',l9:'#BDB092',gyeongui:'#57b6a0',bus:'#3d5afe',taxi:'#c7433d',walk:'#9aa3b2'};
 const PREPAID=[
  {label:'항공 가는편 (10/2 대한항공)',amt:239100},
@@ -355,9 +509,9 @@ DAYS.forEach((d,di)=>d.items.forEach(it=>{ if(it.dl) DEADLINES.push({dt:new Date
 let user='가족', day=0, tab='timeline';
 const USERS=['가족','아빠','엄마','서준','서우'];
 function cycleUser(){user=USERS[(USERS.indexOf(user)+1)%USERS.length];document.getElementById('userBadge').textContent='👤 '+user;}
-let S={checks:{},budget:[],plan:{namsan:'rest',avia:'go'},resv:{},info:{},roles:{}};
+let S={checks:{},budget:[],plan:{namsan:'rest',avia:'go'},resv:{},info:{},roles:{},read:{},open:{}};
 let storageOK=true;
-const KEYS=['checks','budget','plan','resv','info','roles'];
+const KEYS=['checks','budget','plan','resv','info','roles','read'];
 
 /* 이 기기에 저장 (localStorage) — 로그인 불필요, 기기별 독립 기록 */
 async function loadAll(showSync){
@@ -403,7 +557,7 @@ function setTab(t,btn){ tab=t;
   btn.classList.add('on');
   document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('on'));
   document.getElementById('tab-'+t).classList.add('on');
-  if(t==='budget')renderBudget(); if(t==='resv')renderResv(); if(t==='info')fillInfo(); if(t==='sum')renderStats();
+  if(t==='study')renderStudy(); if(t==='budget')renderBudget(); if(t==='resv')renderResv(); if(t==='info')fillInfo(); if(t==='sum')renderStats();
 }
 
 function itemVisible(it){
@@ -473,7 +627,9 @@ function visitHTML(it,nowId){
         ${c?`<div class="c-by">✓ ${c.by!=='가족'?c.by+' · ':''}${c.at}</div>`:''}
       </div>
       <button class="chk" onclick="toggleCheck('${it.id}')">✓</button>
-    </div></div></div>`;
+    </div>
+    ${ITEM_STUDY[it.id]?`<button class="mbtn a-study" onclick="toggleInline('${it.id}','${ITEM_STUDY[it.id]}',this)">📖 알아보기</button><div class="study-box" id="sb-${it.id}"></div>`:''}
+    </div></div>`;
 }
 function moveHTML(it){
   const col=LINECOLOR[it.line]||LINECOLOR.walk;
@@ -530,6 +686,45 @@ function updateHeader(){
     const ms=up.dt-now, h=Math.floor(ms/3600e3), m=Math.floor(ms%3600e3/60e3);
     document.getElementById('deadlineTime').textContent=(h>0?h+'시간 ':'')+m+'분';
   } else bar.classList.remove('show');
+}
+
+
+/* ══════════ 공부 탭 ══════════ */
+function studyBodyHTML(k){
+  const d=STUDY[k];
+  return `<div class="st-body">
+    ${d.sec.map(s=>`<h4>${s.h}</h4><p>${s.p}</p>`).join('')}
+    <h4>가서 볼 것</h4>
+    <ul class="st-chk">${d.chk.map(c=>`<li>${c}</li>`).join('')}</ul>
+    <h4>확인 문제</h4>
+    ${d.quiz.map((q,i)=>`<div class="st-q" onclick="this.classList.toggle('open')"><b>Q${i+1}. ${q.q}</b><span>${q.a}</span></div>`).join('')}
+  </div>`;
+}
+function renderStudy(){
+  const done=STUDY_ORDER.filter(k=>S.read[k]).length;
+  document.getElementById('stProg').style.width=(done/STUDY_ORDER.length*100)+'%';
+  document.getElementById('stProgLab').textContent=`11곳 중 ${done}곳 읽음`;
+  document.getElementById('studyList').innerHTML=STUDY_ORDER.map(k=>{
+    const d=STUDY[k], open=!!S.open[k];
+    return `<div class="sec st-card ${S.read[k]?'read':''}">
+      <div class="st-head" onclick="toggleStudy('${k}')">
+        <div><div class="st-title">${d.title}</div><div class="st-one">${d.one}</div></div>
+        <span class="st-mark">${S.read[k]?'✓':'＋'}</span>
+      </div>
+      ${open?studyBodyHTML(k):''}
+    </div>`;
+  }).join('');
+}
+async function toggleStudy(k){
+  S.open[k]=!S.open[k];
+  if(S.open[k] && !S.read[k]){ S.read[k]=true; await save('read'); }
+  renderStudy();
+}
+function toggleInline(id,k,btn){
+  const box=document.getElementById('sb-'+id);
+  if(box.innerHTML){ box.innerHTML=''; btn.textContent='📖 알아보기'; }
+  else{ box.innerHTML=studyBodyHTML(k); btn.textContent='📖 접기';
+        if(!S.read[k]){ S.read[k]=true; save('read'); } }
 }
 
 /* ══════════ 예산 ══════════ */
@@ -616,7 +811,7 @@ function makeSummary(){
 }
 
 /* ══════════ 부팅 ══════════ */
-function renderAll(){ renderTimeline(); renderBudget(); renderResv(); fillInfo(); renderStats(); }
+function renderAll(){ renderTimeline(); renderBudget(); renderResv(); fillInfo(); renderStats(); renderStudy(); }
 setDay(todayIdx());
 loadAll(true);
 setInterval(updateHeader,20000);
