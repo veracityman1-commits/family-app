@@ -134,6 +134,13 @@ pre.summary{white-space:pre-wrap;background:#f6f8fb;border-radius:10px;padding:1
 .offline{background:#fdf1dc;color:#8a5b12;font-size:12px;padding:8px 12px;border-radius:10px;margin-bottom:10px;display:none}
 .offline.show{display:block}
 
+
+.gl{color:var(--l1);text-decoration:none;border-bottom:1.5px dotted var(--l1);font-weight:600}
+.gl::after{content:'↗';font-size:9px;vertical-align:5px;margin-left:1px;opacity:.7}
+.st-src{display:flex;gap:8px;margin-top:8px}
+.st-src button{flex:1;padding:9px;border-radius:9px;font-size:13px;font-weight:700;background:#eef1f6;color:var(--sub)}
+.st-src button.sel{background:var(--l1);color:#fff}
+
 /* 공부 */
 .st-card{padding:0;overflow:hidden}
 .st-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 15px;cursor:pointer}
@@ -259,7 +266,11 @@ pre.summary{white-space:pre-wrap;background:#f6f8fb;border-radius:10px;padding:1
       <h3>여행 전 공부 <small>방문지 11곳</small></h3>
       <div class="st-prog"><i id="stProg"></i></div>
       <div class="g-lab"><span id="stProgLab">11곳 중 0곳 읽음</span><span>탭하면 펼쳐져요</span></div>
-      <p class="note">각 장소를 눌러 읽어보세요. 여행 당일에는 일정 화면의 「📖 알아보기」 버튼으로 같은 내용을 바로 볼 수 있어요.</p>
+      <p class="note">각 장소를 눌러 읽어보세요. 여행 당일에는 일정 화면의 「📖 알아보기」 버튼으로 같은 내용을 바로 볼 수 있어요.<br>본문의 <span class="gl" style="border:0">파란 낱말</span>을 누르면 사전이 열립니다.</p>
+      <div class="st-src">
+        <button id="srcNamu" onclick="setWiki('namu')">나무위키</button>
+        <button id="srcWiki" onclick="setWiki('wiki')">위키백과</button>
+      </div>
     </div>
     <div id="studyList"></div>
   </div>
@@ -367,6 +378,41 @@ const DAYS = [
   {id:'f2',t:'19:05',type:'flight',title:'김포 출발 ✈️',sub:'진에어 AQSL7D · 제주 20:15 도착 · 17:20 짐 찾고 수속',dl:'2026-10-04T17:20',dlLabel:'공항 수속 시작'}
  ]}
 ];
+
+
+/* ══════════ 용어 사전 링크 ══════════ */
+/* 값이 있으면 그 문서명으로, 없으면 용어 그대로 검색 */
+const GLOSS={
+ '대한민국 임시정부':{}, '경천사지 십층석탑':{n:'개성 경천사지 십층석탑',w:'개성 경천사지 십층석탑'},
+ '천상열차분야지도':{}, '반가사유상':{n:'금동미륵보살반가사유상',w:'금동미륵보살반가사유상'},
+ '한산도대첩':{n:'한산도 대첩',w:'한산도 대첩'}, '6·25전쟁':{n:'6.25 전쟁',w:'한국 전쟁'},
+ '3·1운동':{n:'3.1 운동',w:'3·1 운동'}, '조선총독부':{}, '흥선대원군':{}, '명성황후':{},
+ '을미사변':{}, '아관파천':{}, '임진왜란':{}, '정전협정':{n:'정전협정',w:'한국 휴전 협정'},
+ '일월오봉도':{}, '대한제국':{}, '경국대전':{}, '서대문형무소':{}, '롯데월드타워':{},
+ '국립중앙과학관':{}, '블랙이글스':{}, '이순신':{n:'이순신',w:'이순신'}, '유관순':{},
+ '안창남':{}, '정도전':{}, '강우규':{}, '자격루':{}, '근정전':{}, '경회루':{}, '창경궁':{},
+ '거북선':{}, '학익진':{}, '육군본부':{n:'대한민국 육군본부',w:'대한민국 육군본부'},
+ '복엽기':{}, '봉수':{n:'봉수',w:'봉수'}, '김구':{}, '고려':{}, '세종':{n:'세종(조선)',w:'조선 세종'},
+ '순종':{n:'순종(대한제국)',w:'순종(대한제국)'}, '취타대':{n:'대취타',w:'대취타'}
+};
+const GLOSS_KEYS=Object.keys(GLOSS).sort((a,b)=>b.length-a.length);
+function glossUrl(t){
+  const g=GLOSS[t]||{};
+  if((S.info.wiki||'namu')==='wiki')
+    return 'https://ko.wikipedia.org/wiki/'+encodeURIComponent(g.w||t);
+  return 'https://namu.wiki/w/'+encodeURIComponent(g.n||t);
+}
+/* 카드마다 용어당 첫 번째 등장 한 번만 링크 */
+function linkify(text,used){
+  for(const t of GLOSS_KEYS){
+    if(used.has(t)) continue;
+    const i=text.indexOf(t);
+    if(i<0) continue;
+    used.add(t);
+    text=text.slice(0,i)+'<a class="gl" href="'+glossUrl(t)+'" target="_blank" rel="noopener">'+t+'</a>'+text.slice(i+t.length);
+  }
+  return text;
+}
 
 /* ══════════ 방문지 학습 자료 (중학생 수준) ══════════ */
 const STUDY = {
@@ -691,16 +737,20 @@ function updateHeader(){
 
 /* ══════════ 공부 탭 ══════════ */
 function studyBodyHTML(k){
-  const d=STUDY[k];
+  const d=STUDY[k]; const used=new Set();
   return `<div class="st-body">
-    ${d.sec.map(s=>`<h4>${s.h}</h4><p>${s.p}</p>`).join('')}
+    ${d.sec.map(s=>`<h4>${s.h}</h4><p>${linkify(s.p,used)}</p>`).join('')}
     <h4>가서 볼 것</h4>
     <ul class="st-chk">${d.chk.map(c=>`<li>${c}</li>`).join('')}</ul>
     <h4>확인 문제</h4>
     ${d.quiz.map((q,i)=>`<div class="st-q" onclick="this.classList.toggle('open')"><b>Q${i+1}. ${q.q}</b><span>${q.a}</span></div>`).join('')}
   </div>`;
 }
+async function setWiki(v){ S.info.wiki=v; await save('info'); renderStudy(); renderTimeline(); }
 function renderStudy(){
+  const w=S.info.wiki||'namu';
+  document.getElementById('srcNamu').classList.toggle('sel',w==='namu');
+  document.getElementById('srcWiki').classList.toggle('sel',w==='wiki');
   const done=STUDY_ORDER.filter(k=>S.read[k]).length;
   document.getElementById('stProg').style.width=(done/STUDY_ORDER.length*100)+'%';
   document.getElementById('stProgLab').textContent=`11곳 중 ${done}곳 읽음`;
