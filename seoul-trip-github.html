@@ -430,12 +430,12 @@ const DAYS = [
   {id:'m4c',t:'12:10',type:'move',line:'walk',chip:'🚶 도보',title:'민속박물관 → 토속촌',time:'18분 · 궁을 서쪽으로 가로질러',
    detail:'경복궁 안을 서쪽으로 통과해 영추문 방향. 아이들이 지치면 안국역에서 3호선 한 정거장(경복궁역)도 가능',
    from:['국립민속박물관',P.folk],to:['토속촌 삼계탕',P.tosok]},
-  {id:'e3',t:'12:30',type:'meal',title:'점심 — 토속촌 삼계탕',sub:'개천절 대기 감안 · 대기 길면 이름 적고 인왕산 보며 기다리기'},
+  {id:'e3',t:'12:30',type:'meal',title:'점심 — 토속촌 삼계탕',sub:'개천절 대기 감안 · 대기 30분 넘으면 미련 없이 서촌 골목 다른 집으로 (과학관 회차가 걸려 있음)'},
   {id:'m5',t:'13:40',type:'move',line:'l3',chip:'3호선',title:'경복궁 → 혜화',time:'30분 · 충무로 환승 4호선',
    detail:'3호선 경복궁 → 충무로 환승 → 4호선 혜화역',from:['경복궁역',P.tosok],to:['국립어린이과학관',P.sci]},
   {id:'v7',t:'14:30',type:'visit',title:'국립어린이과학관',sub:'체험 전시',resv:true,dl:'2026-10-03T14:30',dlLabel:'과학관 예약 회차'},
   {id:'m6',t:'16:00',type:'move',line:'taxi',chip:'🚐 벤티',title:'혜화 → 서대문형무소',time:'20분 · 약 1.5만원',
-   detail:'환승 2회 구간이라 택시 유지. 대체: 4호선 혜화→충무로→3호선 독립문 (30분)',
+   detail:'환승 2회 구간이라 택시 유지. ⚠️ 개천절 토요일 오후 도심 정체 시 30~40분 걸릴 수 있음 — 앱 지도로 먼저 확인하고, 막히면 지하철(4호선 혜화→충무로→3호선 독립문, 30분)로 전환',
    from:['혜화역',P.sci],to:['서대문형무소역사관',P.prison]},
   {id:'v8',t:'16:20',type:'visit',title:'서대문형무소역사관',sub:'항일 역사 · 입장 마감 17:30, 관람은 18:00까지',dl:'2026-10-03T17:30',dlLabel:'형무소 입장 마감'},
   {id:'ms4',t:'',type:'mission',title:'미션 · 태극기를 몇 번 찾을 수 있을까?',sub:'나올 때 개수 비교'},
@@ -447,7 +447,7 @@ const DAYS = [
  { date:'2026-10-04', items:[
   {id:'m8',t:'09:45',type:'move',line:'l8',chip:'8호선',title:'체크아웃 → 잠실 직행 ✨',time:'10분 · 환승 없음 · 3정거장',
    detail:'짐 들고 가는 구간이 10분으로 끝남. 잠실역 지하 롯데월드몰 직결. 체크아웃은 11시까지지만 아쿠아리움 개장(10:00)에 맞춰 일찍 나선다',from:['천호역',P.cheonho],to:['롯데월드몰',P.lotte]},
-  {id:'v9',t:'09:55',type:'visit',title:'롯데월드몰 — 짐 보관',sub:'대형락커 · 만석 시 안내데스크 짐보관'},
+  {id:'v9',t:'09:55',type:'visit',title:'롯데월드몰 — 짐 보관',sub:'대형락커 · 만석 시 안내데스크 짐보관 · 전날 밤에 락커 위치 미리 찾아둘 것'},
   {id:'v11',t:'10:00',type:'visit',title:'아쿠아리움',sub:'개장 동시 입장 · 벨루가 · 오션터널 · 해파리 · 극지방 · 100분'},
   {id:'v10',t:'11:45',type:'visit',title:'서울스카이 전망대',sub:'낮 전망 · 85분 · 매표·보안검색 대기 감안',resv:true,dl:'2026-10-04T11:45',dlLabel:'스카이 예약 시간'},
   {id:'ms5',t:'',type:'mission',title:'미션 · 전망대에서 남산타워 찾기 🔭',sub:'우리 어제 갔던(또는 안 갔던) 그곳!'},
@@ -833,7 +833,7 @@ function renderTimeline(){
     }
     if(it.type==='planb2'){
       if(S.plan.avia==='go'){
-        box.insertAdjacentHTML('beforeend', visitHTML({id:'v-avia',t:'15:20',type:'visit',title:'국립항공박물관 ✈️',sub:'관람 1시간 40분 · 짐은 공항 코인락커에 먼저 · 시뮬레이터 선착순 · 17:00 공항 복귀'},nowId));
+        box.insertAdjacentHTML('beforeend', visitHTML({id:'v-avia',t:'15:30',type:'visit',title:'국립항공박물관 ✈️',sub:'무료 · 관람 1시간 30분 · 짐은 국내선 코인락커에 먼저 · 김포공항역 도보 8분 · 최종입장 17:00 · 시뮬레이터 선착순 · 17:10 공항 복귀'},nowId));
       }
       return;
     }
