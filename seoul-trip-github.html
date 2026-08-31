@@ -711,10 +711,10 @@ const PREPAID=[
 ];
 const PREPAID_SUM=PREPAID.reduce((a,b)=>a+b.amt,0);
 const RESV_FIXED=[
- {id:'r0a',title:'항공 가는편 — 대한항공',when:'10/2(금) 08:35 제주→김포 · DRENH9'},
- {id:'r0b',title:'항공 오는편 — 진에어',when:'10/4(일) 19:05 김포→제주 · AQSL7D'},
- {id:'r0c',title:'숙소 — 몬드스테이(천호)',when:'10/2 15:00 체크인 ~ 10/4 11:00 체크아웃 · 올림픽로71길 68 101호'},
- {id:'r3',title:'⭐ 서울스카이 (+아쿠아리움 콤보)',when:'10/4(일) 10:30 전후 · ✅ 상시 예약 가능 — 지금 바로 잡을 것'},
+ {id:'r0a',title:'항공 가는편 — 대한항공',when:'10/2(금) 08:35 제주 → 김포 09:40',fixed:true,code:'DRENH9'},
+ {id:'r0b',title:'항공 오는편 — 진에어',when:'10/4(일) 19:05 김포 → 제주 20:15',fixed:true,code:'AQSL7D'},
+ {id:'r0c',title:'숙소 — 몬드스테이(천호)',when:'10/2 15:00 체크인 ~ 10/4 11:00 체크아웃 · 올림픽로71길 68 101호',fixed:true},
+ {id:'r3',title:'⭐ 서울스카이 (+아쿠아리움 콤보)',when:'10/4(일) 10:30 전후 · ✅ 상시 예약 가능(마감 없음) · 일요일 오전은 일찍 차니 9월 중순까지 잡아둘 것'},
  {id:'r1',title:'국립중앙박물관 어린이박물관',when:'10/2(금) 오후 회차 · 예약 오픈 9/18(금) 00시 (관람 14일 전)'},
  {id:'r2',title:'국립어린이과학관',when:'10/3(토) 14:30 전후 회차 · 예약 오픈 9/20경 (2주 전부터 하루씩 열림)'},
  {id:'r5',title:'국립민속박물관 어린이박물관',when:'10/3(토) 11:00 회차 · 예약 오픈 9/19(토) (관람 14일 전) · 현장접수 불가'}
@@ -730,6 +730,17 @@ let S={checks:{},budget:[],plan:{namsan:'rest',avia:'go'},resv:{},info:{},roles:
 let storageOK=true;
 const KEYS=['checks','budget','plan','resv','info','roles','read','rec'];
 
+/* 이미 결제까지 끝난 예약(항공·숙소)은 기기마다 따로 입력할 필요가 없다.
+   fixed:true인 항목을 '예약 완료 + 예약번호'로 미리 채워 준다.
+   사용자가 한 번이라도 손댄 항목은 건드리지 않는다. */
+function seedFixedResv(){
+  RESV_FIXED.forEach(r=>{
+    if(!r.fixed) return;
+    if(S.resv[r.id]) return;
+    S.resv[r.id]={done:true, memo:r.code||''};
+  });
+}
+
 /* 이 기기에 저장 (localStorage) — 로그인 불필요, 기기별 독립 기록 */
 async function loadAll(showSync){
   for(const k of KEYS){
@@ -738,6 +749,7 @@ async function loadAll(showSync){
       if(v) S[k]=JSON.parse(v);
     }catch(e){ /* 없으면 기본값 */ }
   }
+  seedFixedResv();
   renderAll();
   if(showSync) sync('불러옴');
 }
