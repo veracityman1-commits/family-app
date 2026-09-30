@@ -404,7 +404,7 @@ const P = { // 좌표 (lat,lng)
   gimpo:[37.5585,126.7906], war:[37.5369,126.9772], museum:[37.5240,126.9803],
   cheonho:[37.5385,127.1237], palace:[37.5796,126.9770], folk:[37.5814,126.9799],
   tosok:[37.5773,126.9718], sci:[37.5822,127.0033], prison:[37.5744,126.9563],
-  namsan:[37.5512,126.9882], lotte:[37.5133,127.1028], avia:[37.5599,126.7810]
+  namsan:[37.5512,126.9882], lotte:[37.5133,127.1028], avia:[37.5599,126.7810], jonggak:[37.5701,126.9831]
 };
 function navWeb(sn,s,en,e){
   return `https://m.map.naver.com/route.nhn?menu=route&sname=${encodeURIComponent(sn)}&sx=${s[1]}&sy=${s[0]}&ename=${encodeURIComponent(en)}&ex=${e[1]}&ey=${e[0]}&pathType=1`;
@@ -433,12 +433,12 @@ const DAYS = [
    detail:'🚪 삼각지역 <b>12번 출구</b>(전쟁기념관 정문 앞)로 들어가 4호선 승강장. 사당행·오이도행·안산행 모두 같은 방향<br>🚪 이촌역 <b>2번 출구</b> = 박물관나들길 직결',from:['삼각지역',P.war],to:['국립중앙박물관',P.museum]},
   {id:'opt2',t:'',type:'visit',title:'[참고] 용산어린이정원',sub:'신용산역 1번 출구 도보 5분 · 2025.12.30부터 예약·신분증 없이 자유 입장 · 월요일 휴관 · 전쟁기념관이 일찍 끝나면 중간에 들를 수 있음'},
   {id:'e1',t:'12:55',type:'meal',title:'점심 — 박물관 거울못 식당/푸드코트',sub:'짐은 무료 대형락커에 먼저'},
-  {id:'v2',t:'13:50',type:'visit',title:'국립중앙박물관',sub:'상설전시 · 사유의 방',resv:true,dl:'2026-10-02T14:00',dlLabel:'어린이박물관 회차'},
+  {id:'v2',t:'13:50',type:'visit',title:'국립중앙박물관',sub:'13:50 1층 신라실 금관 → <b>14:30~15:50 어린이박물관</b>(4회차 · 14:30 정각, 30분 지나면 취소) → 15:50 사유의 방 · 나오며 경천사 십층석탑',resv:true,dl:'2026-10-02T14:30',dlLabel:'어린이박물관 4회차'},
   {id:'ms2',t:'',type:'mission',title:'미션 · 사유의 방 반가사유상 — 무슨 생각 중일까?',sub:'각자 답을 하나씩 말하기'},
-  {id:'m3',t:'16:30',type:'move',line:'gyeongui',chip:'경의중앙+5호선',title:'이촌 → 천호 (짐 들고)',time:'35분 · 왕십리 환승 1회',
+  {id:'m3',t:'16:45',type:'move',line:'gyeongui',chip:'경의중앙+5호선',title:'이촌 → 천호 (짐 들고)',time:'35분 · 왕십리 환승 1회',
    legs:[{line:'gyeongui',chip:'경의중앙선',from:'이촌역',train:'팔당행',next:'서빙고역'},{line:'l5',chip:'5호선',from:'왕십리역',train:'마천행',next:'마장역'}], dest:'천호역',
    detail:'① 이촌역 경의중앙선 <b>팔당행</b> (덕소행·용문행도 같은 방향) → 왕십리 하차<br>② 5호선 <b>마천행</b> (하남검단산행도 같은 방향) → 천호<br>🚪 천호역 <b>1·2번 출구</b> → 숙소까지 평지 도보 5분',from:['이촌역',P.museum],to:['천호역',P.cheonho]},
-  {id:'v3',t:'17:15',type:'visit',title:'몬드스테이 체크인',sub:'올림픽로71길 68 101호 · 천호역 도보 5분 · 1층·평지'},
+  {id:'v3',t:'17:30',type:'visit',title:'몬드스테이 체크인',sub:'올림픽로71길 68 101호 · 천호역 도보 5분 · 1층·평지 · 체크인 시각은 약속이 아니라 늦어도 됨'},
   {id:'e2',t:'18:30',type:'meal',title:'저녁 — 천호 먹자골목',sub:'현대백화점 천호점·이마트 인근 · 도보'}
  ]},
  { date:'2026-10-03', items:[
@@ -460,32 +460,35 @@ const DAYS = [
   {id:'m5',t:'13:40',type:'move',line:'l3',chip:'3호선',title:'경복궁 → 혜화',time:'30분 · 충무로 환승 4호선',
    legs:[{line:'l3',chip:'3호선',from:'경복궁역',train:'오금행',next:'안국역'},{line:'l4',chip:'4호선',from:'충무로역',train:'불암산행',next:'동대문역사문화공원역'}], dest:'혜화역',
    detail:'① 경복궁역 3호선 <b>오금행</b> → 충무로 하차<br>② 4호선 <b>불암산행</b> (진접행도 같은 방향 · 옛 이름 당고개행) → 혜화<br>🚪 혜화역 <b>4번 출구</b> → 과학관 도보 10분',from:['경복궁역',P.tosok],to:['국립어린이과학관',P.sci]},
-  {id:'v7',t:'14:30',type:'visit',title:'국립어린이과학관',sub:'체험 전시',resv:true,dl:'2026-10-03T14:30',dlLabel:'과학관 예약 회차'},
+  {id:'v7',t:'14:20',type:'visit',title:'국립어린이과학관',sub:'14:20 도착·상설 입장권 QR → <b>2층 빛놀이터 14:30~14:55</b>(25분 · 유아 보호자 동반) → 15:00~16:00 상설전시관 자유관람 → 16:00 출발 · 예약 2건 QR은 [예약] 탭 · 입장 시 등본·다자녀카드 실물 제시',resv:true,dl:'2026-10-03T14:30',dlLabel:'빛놀이터 14:30 회차'},
   {id:'m6',t:'16:00',type:'move',line:'taxi',chip:'🚐 벤티',title:'혜화 → 서대문형무소',time:'20분 · 약 1.5만원',
    detail:'환승 2회 구간이라 택시 유지. ⚠️ 개천절 토요일 오후 도심 정체 시 30~40분 걸릴 수 있음 — 앱 지도로 먼저 확인하고, 막히면 지하철로 전환: 4호선 사당·오이도 방면 혜화→충무로 → 3호선 대화 방면 충무로→독립문 (30분)',
    from:['혜화역',P.sci],to:['서대문형무소역사관',P.prison]},
   {id:'v8',t:'16:20',type:'visit',title:'서대문형무소역사관',sub:'항일 역사 · 입장 마감 17:30, 관람은 18:00까지',dl:'2026-10-03T17:30',dlLabel:'형무소 입장 마감'},
   {id:'ms4',t:'',type:'mission',title:'미션 · 태극기를 몇 번 찾을 수 있을까?',sub:'나올 때 개수 비교'},
-  {id:'m7',t:'18:00',type:'move',line:'l5',chip:'3→5호선',title:'독립문 → 천호',time:'45분 · 종로3가 환승 1회',
-   legs:[{line:'l3',chip:'3호선',from:'독립문역',train:'오금행',next:'경복궁역'},{line:'l5',chip:'5호선',from:'종로3가역',train:'마천행',next:'을지로4가역'}], dest:'천호역',
-   detail:'🚪 독립문역 <b>5번 출구</b>(형무소 앞)로 들어감<br>① 3호선 <b>오금행</b> → 종로3가 하차<br>② 5호선 <b>마천행</b> (하남검단산행도 같은 방향) → 천호. 저녁 시간대라 앉아갈 확률 높음<br>🚪 천호역 <b>1·2번 출구</b> → 숙소 도보 5분',from:['독립문역',P.prison],to:['천호역',P.cheonho]},
-  {id:'e4',t:'18:50',type:'meal',title:'저녁 — 천호 먹자골목',sub:'숙소 도보권 · 관광객 없는 현지 상권'},
-  {id:'pb1',t:'20:00',type:'planb'}
+  {id:'m7',t:'18:00',type:'move',line:'l3',chip:'3호선',title:'독립문 → 종각',time:'20분 · 종로3가 하차 후 도보 5분',
+   legs:[{line:'l3',chip:'3호선',from:'독립문역',train:'오금행',next:'경복궁역'}], dest:'종로3가역 → 도보 종각',
+   detail:'🚪 독립문역 <b>5번 출구</b>(형무소 앞)로 들어감<br>3호선 <b>오금행</b> 3정거장 → 종로3가 하차<br>🚪 종로3가역 <b>1번 출구</b> → 종로 따라 서쪽으로 도보 5분(400m) = 종로타워(종각역 사거리). 1호선 한 정거장 타는 것보다 걷는 게 빠름',from:['독립문역',P.prison],to:['영풍문고 종각점',P.jonggak]},
+  {id:'v12',t:'18:25',type:'visit',title:'영풍문고 종각점 📚',sub:'종로타워 지하 1~2층 · 영풍문고 최대 매장(3,200평) · 22시까지 · 어린이 코너·문구 · 아이들 책 한 권씩 · 50분'},
+  {id:'e4',t:'19:15',type:'meal',title:'저녁 — 종각·종로',sub:'종로타워 지하 식당가 또는 청계천 쪽 · 아이들 메뉴 되는 곳으로 · 60분'},
+  {id:'m7b',t:'20:15',type:'move',line:'l5',chip:'5호선',title:'종로3가 → 천호',time:'30분 · 환승 없음',
+   legs:[{line:'l5',chip:'5호선',from:'종로3가역',train:'마천행',next:'을지로4가역'}], dest:'천호역',
+   detail:'종각에서 종로3가역까지 도보 5분 → 5호선 <b>마천행</b> (하남검단산행도 같은 방향). 저녁 시간대라 앉아갈 확률 높음<br>🚪 천호역 <b>1·2번 출구</b> → 숙소 도보 5분',from:['종로3가역',P.jonggak],to:['천호역',P.cheonho]},
+  {id:'pb1',t:'20:50',type:'planb'}
  ]},
  { date:'2026-10-04', items:[
-  {id:'m8',t:'09:45',type:'move',line:'l8',chip:'8호선',title:'체크아웃 → 잠실 직행 ✨',time:'10분 · 환승 없음 · 3정거장',
+  {id:'m8',t:'10:00',type:'move',line:'l8',chip:'8호선',title:'체크아웃 → 잠실 직행 ✨',time:'10분 · 환승 없음 · 3정거장',
    legs:[{line:'l8',chip:'8호선',from:'천호역',train:'모란행',next:'강동구청역'}], dest:'잠실역 (3정거장)',
-   detail:'짐 들고 가는 구간이 10분으로 끝남. 체크아웃은 11시까지지만 아쿠아리움 개장(10:00)에 맞춰 일찍 나선다<br>🚪 잠실역 지하 → 롯데월드몰 직결',from:['천호역',P.cheonho],to:['롯데월드몰',P.lotte]},
-  {id:'v9',t:'09:55',type:'visit',title:'롯데월드몰 — 짐 보관',sub:'대형락커 · 만석 시 안내데스크 짐보관 · 전날 밤에 락커 위치 미리 찾아둘 것'},
-  {id:'v11',t:'10:00',type:'visit',title:'아쿠아리움',sub:'개장 동시 입장 · 벨루가 · 오션터널 · 해파리 · 극지방 · 100분'},
-  {id:'v10',t:'11:45',type:'visit',title:'서울스카이 전망대',sub:'낮 전망 · 85분 · 매표·보안검색 대기 감안',resv:true,dl:'2026-10-04T11:45',dlLabel:'스카이 예약 시간'},
+   detail:'짐 들고 가는 구간이 10분으로 끝남. 이틀 강행군 뒤라 서두르지 않는다(체크아웃 11시까지)<br>🚪 잠실역 지하 → 롯데월드몰 직결',from:['천호역',P.cheonho],to:['롯데월드몰',P.lotte]},
+  {id:'v9',t:'10:15',type:'visit',title:'롯데월드몰 — 짐 보관',sub:'대형락커 · 만석 시 안내데스크 짐보관 · 전날 밤에 락커 위치 미리 찾아둘 것'},
+  {id:'v10',t:'11:00',type:'visit',title:'서울스카이 전망대',sub:'<b>11:00 회차</b> · 10:40 지하1층 매표·보안검색 · 117~123층 · 85분 · 아쿠아리움은 제주에 있어 뺌(9/29)',resv:true,dl:'2026-10-04T11:00',dlLabel:'스카이 예약 시간'},
   {id:'ms5',t:'',type:'mission',title:'미션 · 전망대에서 남산타워 찾기 🔭',sub:'우리 어제 갔던(또는 안 갔던) 그곳!'},
-  {id:'e5',t:'13:10',type:'meal',title:'점심 — 롯데월드몰',sub:'14:00 출발 위해 조금 일찍'},
-  {id:'m9',t:'14:00',type:'move',line:'l9',chip:'8→9호선',title:'롯데월드몰 → 항공박물관 (짐 찾아서)',time:'급행 60분 / 일반 75분',
+  {id:'e5',t:'12:30',type:'meal',title:'점심 — 롯데월드몰',sub:'여유 60분 · 13:30 짐 찾아 출발'},
+  {id:'m9',t:'13:30',type:'move',line:'l9',chip:'8→9호선',title:'롯데월드몰 → 항공박물관 (짐 찾아서)',time:'급행 60분 / 일반 75분',
    legs:[{line:'l8',chip:'8호선',from:'잠실역',train:'모란행',next:'석촌역'},{line:'l9',chip:'9호선',from:'석촌역',train:'개화행',next:'석촌고분역'}], dest:'김포공항역',
    detail:'① 잠실역 8호선 <b>모란행</b> 한 정거장 → 석촌 하차<br>② 9호선 <b>개화행</b>(일반, 다음역 석촌고분) 또는 <b>김포공항행</b>(급행, 다음 정차 종합운동장) — 둘 다 김포공항에 선다. 혼잡하면 일반이 한산해서 5인 착석 유리<br>🧳 김포공항역 <b>지하1층 유인보관소</b>(5호선 게이트 방향)에 짐 맡기고<br>🚪 국내선 1층 <b>제2주차장 방면</b> 출구로 나가 빈손으로 직진 400m = 항공박물관',
    from:['잠실역',P.lotte],to:['국립항공박물관',P.avia]},
-  {id:'pb2',t:'15:25',type:'planb2'},
+  {id:'pb2',t:'15:00',type:'planb2'},
   {id:'f2',t:'19:05',type:'flight',title:'김포 출발 ✈️',sub:'진에어 AQSL7D · 제주 20:15 도착 · 17:10 청사 도착 · 17:20 수속',dl:'2026-10-04T17:20',dlLabel:'공항 수속 시작'}
  ]}
 ];
@@ -506,7 +509,6 @@ const ONETHING={
  science:'가장 이해 안 되는 체험물 하나를 붙잡고 될 때까지 해볼 것',
  prison:'여옥사 8호 감방 앞에 5초만 말없이 서 있어 볼 것',
  sky:'어제·오늘 다녀온 곳들을 손가락으로 하나씩 짚어볼 것',
- aqua:'해저터널 한가운데서 고개를 들고 1분간 가만히 있어 볼 것',
  namsan:'봉수대 자리에서 서울 야경을 보며, 옛날엔 이 불빛이 없었다는 걸 떠올려 볼 것',
  avia:'금강호 아래 서서, 1922년 이 비행기를 올려다본 사람들을 상상해 볼 것'
 };
@@ -534,7 +536,6 @@ const TALK={
  science:'오늘 체험한 것 중에 하나를 골라, 왜 그렇게 되는지 아빠·엄마한테 설명해 줄래?',
  prison:'유관순은 열여덟 살이었어. 지금 네 나이에서 몇 년 뒤일까? 그 나이에 그런 결심을 한다는 건 어떤 걸까?',
  sky:'555m 위에서 내려다본 서울은 어떤 모양이었어? 지도에서 보던 것과 뭐가 달랐어?',
- aqua:'수조 안 동물들에게 그 공간이 충분해 보였어? 왜 그렇게 생각해?',
  namsan:'옛날에는 이 자리에서 불과 연기로 소식을 전했대. 지금 우리가 쓰는 방법과 뭐가 다를까?',
  avia:'안창남이 하늘을 나는 걸 보고 사람들이 왜 그렇게 감격했을까? 그때 조선은 어떤 상황이었지?'
 };
@@ -668,16 +669,6 @@ const STUDY = {
   chk:['한강에 놓인 다리를 세어 보고 이름 3개 알아내기','남산서울타워 찾기','우리가 묵는 천호동 방향 찾아보기','유리 바닥 위에 서 보기'],
   quiz:[{q:'롯데월드타워의 층수·높이와 현재 세계 순위는?',a:'123층 555m, 세계 6위'},{q:'전망대 엘리베이터의 속도는?',a:'분속 600m (1분 안에 500m 상승)'},{q:'초고층 건물이 바람에 흔들리도록 짓는 이유는?',a:'힘을 흘려보내야 더 안전하기 때문'}]},
 
- aqua:{title:'롯데월드 아쿠아리움',one:'2014년 문을 연 도심 대형 수족관',
-  sec:[
-   {h:'어떤 곳인가',p:'2014년 10월 롯데월드몰 지하에 문을 열었다. 여러 구역으로 나뉘어 있고, 강\u00b7바다\u00b7극지방 등 서로 다른 환경에 사는 생물을 차례로 볼 수 있게 배치되어 있다.'},
-   {h:'서식지별 전시',p:'아마존 같은 민물 구역, 산호초 구역, 차가운 극지 구역이 이어진다. 물고기가 사는 물의 온도\u00b7염분\u00b7빛의 양이 구역마다 다르고, 수족관은 그 조건을 인공적으로 만들어 유지한다. 유리 너머의 물이 그냥 물이 아니라는 뜻이다.'},
-   {h:'해저터널',p:'머리 위로 물이 지나가는 터널 구간이 있다. 상어와 가오리가 바로 위를 헤엄쳐 지나간다. 상어는 부레가 없어서 헤엄을 멈추면 가라앉는 종류가 많다. 그래서 계속 움직이는 것이다.'},
-   {h:'생각해 볼 점',p:'수족관은 바다 생물을 가까이서 볼 수 있게 해주지만, 좁은 수조에서 큰 동물을 기르는 것이 옳은지에 대해서는 오래된 논쟁이 있다. 재미있게 보되 \u2018이 동물에게 이 공간이 충분할까\u2019를 한 번 생각해 보면 좋다.'}
-  ],
-  chk:['가장 큰 물고기와 가장 작은 물고기 찾기','해저터널에서 상어가 몇 마리 지나가는지 세기','민물 구역과 바닷물 구역의 생물 차이 관찰하기'],
-  quiz:[{q:'아쿠아리움이 문을 연 해는?',a:'2014년'},{q:'상어가 계속 헤엄치는 이유는?',a:'부레가 없어 멈추면 가라앉는 종류가 많기 때문'}]},
-
  namsan:{title:'남산서울타워',one:'1975년 세운 방송 송신탑, 1980년부터 시민에게 열렸다',
   sec:[
    {h:'원래는 방송탑이었다',p:'1969년 공사를 시작해 1975년 완공되었다. 처음 목적은 관광이 아니라 텔레비전과 라디오 전파를 보내는 송신탑(送信塔)이었다. 일반인에게 전망대를 개방한 것은 1980년 10월부터다.'},
@@ -730,29 +721,31 @@ const STUDY = {
   chk:['안창남의 금강호 찾기','스탠더드 J-1 날개의 태극 문양 확인하기','전시된 비행기 중 우리나라가 직접 만든 것 골라내기','옥상 전망대에서 이착륙하는 비행기 보기'],
   quiz:[{q:'개관일을 7월 5일로 정한 이유는?',a:'1920년 7월 5일 한인비행학교 개교 100주년이기 때문'},{q:'우리나라 최초의 비행사와 그 비행기 이름은?',a:'안창남, 금강호'},{q:'복엽기(複葉機)란 무엇인가?',a:'날개가 위아래 두 겹으로 된 비행기'}]}
 };
-const STUDY_ORDER=['hangang','war','museum','yongsan','palace','guard','folk','seochon','science','prison','sky','aqua','namsan','avia'];
-const ITEM_STUDY={v1:'war',v2:'museum',opt2:'yongsan',e3:'seochon',v4:'palace',v5:'guard',v6:'folk',v7:'science',v8:'prison',v10:'sky',v11:'aqua','v-nam':'namsan','v-avia':'avia'};
+const STUDY_ORDER=['hangang','war','museum','yongsan','palace','guard','folk','seochon','science','prison','sky','namsan','avia'];
+const ITEM_STUDY={v1:'war',v2:'museum',opt2:'yongsan',e3:'seochon',v4:'palace',v5:'guard',v6:'folk',v7:'science',v8:'prison',v10:'sky','v-nam':'namsan','v-avia':'avia'};
 
 const LINECOLOR={l5:'#996CAC',l1:'#0052A4',l3:'#EF7C1C',l4:'#00A5DE',l8:'#E6186C',l9:'#BDB092',gyeongui:'#57b6a0',bus:'#3d5afe',taxi:'#c7433d',walk:'#9aa3b2'};
 const PREPAID=[
  {label:'항공 가는편 (10/2 대한항공)',amt:239100},
  {label:'항공 오는편 (10/4 진에어)',amt:453500},
- {label:'숙소 2박 (몬드스테이)',amt:341800}
+ {label:'숙소 2박 (몬드스테이)',amt:341800},
+ {label:'국립어린이과학관 (상설 3,000 + 빛놀이터 6,000)',amt:9000}
 ];
 const PREPAID_SUM=PREPAID.reduce((a,b)=>a+b.amt,0);
 const RESV_FIXED=[
  {id:'r0a',title:'항공 가는편 — 대한항공',when:'10/2(금) 08:35 제주 → 김포 09:40',fixed:true,code:'DRENH9'},
  {id:'r0b',title:'항공 오는편 — 진에어',when:'10/4(일) 19:05 김포 → 제주 20:15',fixed:true,code:'AQSL7D'},
  {id:'r0c',title:'숙소 — 몬드스테이(천호)',when:'10/2 15:00 체크인 ~ 10/4 11:00 체크아웃 · 올림픽로71길 68 101호',fixed:true},
- {id:'r3',open:'2026-10-01T10:00',openLabel:'서울스카이 결제·방문 결정',title:'⭐ 서울스카이 (+아쿠아리움 콤보)',when:'10/4(일) ⚠️ 서울스카이 11:45 회차로 변경(아쿠아리움 10:00 먼저) · 대인2+소인3 · 콤보 240,000 / 삼성카드2장 229,500 / 서울스카이만 115,800 → 10/1에 결제·방문 여부 결정'},
- {id:'r1',open:'2026-09-18T00:00',openLabel:'국립중앙박물관 어린이박물관 예약 오픈',title:'국립중앙박물관 어린이박물관',when:'10/2(금) 오후 회차 · 예약 오픈 9/18(금) 00시 (관람 14일 전)'},
- {id:'r2',open:'2026-09-20T09:00',openLabel:'국립어린이과학관 예약 (9/19부터 매일 확인)',title:'국립어린이과학관',when:'10/3(토) 14:30 전후 회차 · 예약 오픈 9/20경 (2주 전부터 하루씩 열림)'}
+ {id:'rdoc',title:'📄 증빙서류 — 가족관계증명서·다자녀카드',when:'10/3 과학관 다자녀 할인 확인용(입장 때 제시, 없으면 현장 차액) · <b>종이 출력본 지참이 원칙</b> · 아래에 캡처를 첨부하면 <b>이 폰에만</b> 저장되고 GitHub에는 안 올라감 — 주민번호가 있는 서류라 앱 본체에는 넣지 않음 · 세 폰에 각각 첨부'},
+ {id:'r3',open:'2026-10-01T10:00',openLabel:'서울스카이 결제·예약 (11:00 회차)',title:'⭐ 서울스카이 (전망대만)',when:'10/4(일) <b>11:00 회차</b> · 대인2+소인3 · 정상가 115,800원 → 10/1에 카드 프로모션(삼성 등) 확인 후 결제 · 아쿠아리움은 뺌(9/29)'},
+ {id:'r1',fixed:true,code:'1806641',title:'국립중앙박물관 어린이박물관',when:'10/2(금) <b>4회차 14:30~15:50</b> · 예약자 박효성 · 성인2·초등2·영유아1 · 14:30 정각 입장(30분 경과 시 취소) · 게이트에서 QR 스캔',qrs:[{label:'입장 QR · No. 1806641',src:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACuAQAAAACHdwtDAAABAElEQVR4nO2XMW5DIRBEH3+3xzfIUeBmUW5GjuIDRIJ+rUnBt9w4UqpsEa8QQtPwxAyLKOJJ3Y5nKrzk/yoj7aS0AJsAJkUSoEmaOA3aCZZA4gDrYl8IHAotieQh30qPP97yB9nrh2eSOEAVi/CudXqUe3dsttS748DZ8BdxX2blxFf31TeW85lEgiTqoA6bRB0BynFn5+RssAHSSMoJkoK2T4M6TMol0cR0WpPozi5omi3qSM0J0KLKJJtZiX28xTaJ1aNmvcUHwCq+u8p9zuonNrHZoo49Et3Z5cDqdn1POpMDoCpAE6+jvI3II7mVUi44xOq6ZuWkvH5eL/kX8jcREaxre1R5OQAAAABJRU5ErkJggg=='}]},
+ {id:'r2',fixed:true,code:'주문 11342676',title:'국립어린이과학관',when:'10/3(토) 2건 결제 완료 9,000원 · <b>상설전시관 입장권</b> 09:30~17:30 (3,000원 · 유아1·다자녀 성인2·다자녀 청소년2) + <b>빛놀이터 14:30~14:55</b> (6,000원 · 2층) · 입장 시 등본/다자녀카드 실물 · 게이트에서 QR 2개 각각 스캔',qrs:[{label:'상설전시관 입장권 · 205662',src:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACuAQAAAACHdwtDAAAA9UlEQVR4nO2XO24DMQxEH0P18o20V8uRcgPlRlTPxaTYNZLCDtLEDBCrEh4EaDAc6mPixthfblF44v+MzcxsYxnLzKzVKXFJgV2AIekRW97Dyxp40MBsq1QCwH4hH7zlHZxdrVJJA+hi4fGeCx2oQAlnRBkewwPApSzyRNdZou9X/7YnLikGkIwE1XiCJMX1GOnTYxRV58yJx8guD7Kr2pOpAMg+C5UAHsM1AZcKq3OMMyEU5wRG9pldtZ4cXZyMMzCFSgKPIc3sOh4GFUq+4LW1tR0dVHYDArBfoL9af2tZfNpLE8Zf6B3/lFSixJ4/ryf+Af4A2jzIh0dFB1UAAAAASUVORK5CYII='},{label:'빛놀이터 14:30 · 205661',src:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACuAQAAAACHdwtDAAABFUlEQVR4nO2XS24CQQxEn9OWWPbcgKNM3yBHQtxsOAoHQJpeInlUWRAgH5CyGi9Craza1JPdstUmHmh5e+TCy/6vNtLlpYzBWGaAIkUSYJE0s9E+GD/BslrVzSH6zsGsZZIAsGz3a0d+k3+pdqkkbwBVAZoBpCmRZDGz4dKdg5klkdht2y9OiWud1BPvzXsDApzDGpFP7PPAst0Xid5inchHknRZrcFYJFJ3LBBVQPQWdVop8qccWIbRMQk/sTm9J5Ggq4qmqFOkTed+i6UpQPOo7Fu8DHidvE6+QuQzu5vDZiZ6i95Wifyt+wU8DzPzAAflkNztzbF5lW2VOZ2qgIDoFqnb/naLHcpxl0Rir5/Xy/6D/QEoRoYwT10gYQAAAABJRU5ErkJggg=='}]}
 ];
 const DEADLINES = [];
 DAYS.forEach((d,di)=>d.items.forEach(it=>{ if(it.dl) DEADLINES.push({dt:new Date(it.dl),label:it.dlLabel,id:it.id}); }));
 
 /* ══════════ 상태 & 공유 저장 ══════════ */
-const APP_VER='9.14'; // 배포할 때마다 갱신 — 가족 폰이 최신인지 확인용
+const APP_VER='9.29'; // 배포할 때마다 갱신 — 가족 폰이 최신인지 확인용
 let user='가족', day=0, tab='timeline', editId=null;
 const USERS=['가족','아빠','엄마','서준','서우'];
 function cycleUser(){user=USERS[(USERS.indexOf(user)+1)%USERS.length];document.getElementById('userBadge').textContent='👤 '+user;}
@@ -766,8 +759,9 @@ const KEYS=['checks','budget','plan','resv','info','roles','read','rec'];
 function seedFixedResv(){
   RESV_FIXED.forEach(r=>{
     if(!r.fixed) return;
-    if(S.resv[r.id]) return;
-    S.resv[r.id]={done:true, memo:r.code||''};
+    const d=S.resv[r.id];
+    if(!d){ S.resv[r.id]={done:true, memo:r.code||''}; return; }
+    if(r.code && !d.memo){ d.memo=r.code; d.done=true; }  // 예약 전에 켜둔 항목에도 번호 채움
   });
 }
 
@@ -858,16 +852,16 @@ function renderTimeline(){
   DAYS[day].items.forEach(it=>{
     if(it.type==='planb'){
       if(S.plan.namsan==='go'){
-        box.insertAdjacentHTML('beforeend', visitHTML({id:'v-nam',t:'20:00',type:'visit',title:'남산서울타워 야경 🌃',sub:'천호→택시 30분 · 케이블카 대기 길면 순환버스/택시 · 귀가 22시경'},nowId));
+        box.insertAdjacentHTML('beforeend', visitHTML({id:'v-nam',t:'20:50',type:'visit',title:'남산서울타워 야경 🌃',sub:'⚠️ 서점 대신 갈 때만 — 형무소에서 바로 택시 30분 · 귀가 22시경 · 서점과 둘 다는 무리'},nowId));
         box.insertAdjacentHTML('beforeend', moveHTML({id:'m-nam',type:'move',line:'taxi',chip:'🚕 택시',title:'천호 ↔ 남산 왕복',time:'왕복 +5~6만원',detail:'개천절 케이블카 대기 1시간+ 가능 — 남산 순환버스 01번 또는 택시로 정상 진입 권장',from:['천호역',P.cheonho],to:['남산서울타워',P.namsan]}));
       } else {
-        box.insertAdjacentHTML('beforeend', visitHTML({id:'v-rest',t:'20:00',type:'visit',title:'숙소 휴식 · 조기 취침',sub:'내일 잠실 일정 위해 체력 비축'},nowId));
+        box.insertAdjacentHTML('beforeend', visitHTML({id:'v-rest',t:'20:50',type:'visit',title:'숙소 도착 · 휴식',sub:'내일은 10시 체크아웃이라 여유 있음'},nowId));
       }
       return;
     }
     if(it.type==='planb2'){
       if(S.plan.avia==='go'){
-        box.insertAdjacentHTML('beforeend', visitHTML({id:'v-avia',t:'15:25',type:'visit',title:'국립항공박물관 ✈️',sub:'무료 · 김포공항역에서 도보 8분 · 짐은 공항 유인보관소에 두고 빈손으로 (예비: 1층 나래홀 락커) · 관람 1시간 35분 · 최종입장 17:00 · 시뮬레이터 선착순 · 17:00 청사로 → 짐 찾고 수속'},nowId==='pb2'?'v-avia':nowId));
+        box.insertAdjacentHTML('beforeend', visitHTML({id:'v-avia',t:'15:00',type:'visit',title:'국립항공박물관 ✈️',sub:'무료 · 김포공항역에서 도보 8분 · 짐은 공항 유인보관소에 두고 빈손으로 (예비: 1층 나래홀 락커) · 관람 2시간(시뮬레이터 선착순 여유) · 최종입장 17:00 · 17:00 청사로 → 짐 찾고 수속'},nowId==='pb2'?'v-avia':nowId));
       }
       return;
     }
@@ -1143,6 +1137,7 @@ function renderResv(){
       <input placeholder="예약번호 / 메모" value="${d.memo||''}" onchange="setResvMemo('${r.id}',this.value)">
       <input type="file" accept="image/*" style="margin-top:8px;padding:8px" onchange="attachImg('${r.id}',this)">
       ${d.img?`<img src="${d.img}" alt="예약 확인 이미지">`:''}
+      ${r.qrs?`<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:8px">${r.qrs.map(q=>`<div style="text-align:center"><img src="${q.src}" alt="입장 QR" style="width:150px;height:150px;image-rendering:pixelated;border:1px solid var(--line);border-radius:8px;background:#fff;margin:0"><div style="font-size:12px;color:var(--sub);margin-top:4px">${q.label}</div></div>`).join('')}</div><div style="font-size:11px;color:var(--sub);text-align:center;margin-top:4px">게이트 스캐너에 대면 됨 · 캡처 원본도 폰에 보관</div>`:''}
     </div>`;
   }).join('');
 }
