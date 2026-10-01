@@ -337,6 +337,15 @@ pre.summary{white-space:pre-wrap;background:#f6f8fb;border-radius:10px;padding:1
       <p class="note">· 체크·예산 기록은 <b>이 휴대폰에만</b> 저장됩니다 (가족끼리 자동 공유되지 않음)<br>· 인터넷이 있어야 열립니다 (오프라인 미지원)<br>· 브라우저 기록을 지우면 저장 내용도 지워지니 주의하세요<br>· 홈 화면에 추가하면 앱처럼 쓸 수 있어요</p>
     </div>
     <div class="sec">
+      <h3>🌤 날씨 · 복장 <small>9/30 저녁 예보 기준</small></h3>
+      <p class="note" style="line-height:1.7">
+        <b>10/2 금</b> 맑음 · 9~22℃ — 아침 공항·저녁 문구거리는 쌀쌀, 낮 박물관은 반팔<br>
+        <b>10/3 토</b> 맑음 · 10~23℃ — 경복궁·형무소 야외 햇볕 강함, 종각 귀가(20:50) 때 10℃대<br>
+        <b>10/4 일</b> 흐리고 <b>오후 비</b>(70%) · 13~24℃ — 김포공항역→항공박물관 400m 걷는 구간이 비 맞는 자리
+      </p>
+      <p class="note" style="margin-top:6px">· 옷은 <b>반팔/얇은 긴팔 + 벗기 쉬운 겉옷</b>(후드집업·바람막이) — 일교차 13℃, 실내는 덥고 아침저녁은 춥다<br>· 접이식 우산 3개 + 아이 우비(일요일)<br>· 많이 걷는 날: 운동화·여벌 양말·모자·선크림<br>· 아이 여벌옷 1세트(형무소·문구거리 흙·물감)</p>
+    </div>
+    <div class="sec">
       <h3>교통카드 체크</h3>
       <p class="note">· 서준·서우: 어린이 등록된 티머니 각 1장<br>· 막내: 만 6세 미만 무료 — 보호자와 같은 개찰구 통과<br>· 버스 다인승: 기사님께 인원 말하고 태그</p>
     </div>
@@ -439,7 +448,8 @@ const DAYS = [
    legs:[{line:'gyeongui',chip:'경의중앙선',from:'이촌역',train:'팔당행',next:'서빙고역'},{line:'l5',chip:'5호선',from:'왕십리역',train:'마천행',next:'마장역'}], dest:'천호역',
    detail:'① 이촌역 경의중앙선 <b>팔당행</b> (덕소행·용문행도 같은 방향) → 왕십리 하차<br>② 5호선 <b>마천행</b> (하남검단산행도 같은 방향) → 천호<br>🚪 천호역 <b>1·2번 출구</b> → 숙소까지 평지 도보 5분',from:['이촌역',P.museum],to:['천호역',P.cheonho]},
   {id:'v3',t:'17:30',type:'visit',title:'몬드스테이 체크인',sub:'올림픽로71길 68 101호 · 천호역 도보 5분 · 1층·평지 · 체크인 시각은 약속이 아니라 늦어도 됨'},
-  {id:'e2',t:'18:30',type:'meal',title:'저녁 — 천호 먹자골목',sub:'현대백화점 천호점·이마트 인근 · 도보'}
+  {id:'v13',t:'17:45',type:'visit',title:'천호 문구완구거리 🧸',sub:'천호역 1번 출구 1분 · 명신완구·SB현대유통 등 5~6곳 · 말랑이·슬라임·키캡 · 문방구보다 30% 저렴 · 대부분 19시 마감(일·공휴일 휴무 많음 → 금요일이 유일한 기회) · 30분 · 규칙: 한 명당 5천원, 하나씩'},
+  {id:'e2',t:'18:30',type:'meal',title:'저녁 — 천호 먹자골목',sub:'현대백화점 천호점·이마트 인근 · 문구거리에서 도보'}
  ]},
  { date:'2026-10-03', items:[
   {id:'m4',t:'08:10',type:'move',line:'l5',chip:'5호선',title:'천호 → 광화문 직행 ✨',time:'30분 · 환승 없음',
@@ -745,7 +755,7 @@ const DEADLINES = [];
 DAYS.forEach((d,di)=>d.items.forEach(it=>{ if(it.dl) DEADLINES.push({dt:new Date(it.dl),label:it.dlLabel,id:it.id}); }));
 
 /* ══════════ 상태 & 공유 저장 ══════════ */
-const APP_VER='9.29'; // 배포할 때마다 갱신 — 가족 폰이 최신인지 확인용
+const APP_VER='10.01'; // 배포할 때마다 갱신 — 가족 폰이 최신인지 확인용
 let user='가족', day=0, tab='timeline', editId=null;
 const USERS=['가족','아빠','엄마','서준','서우'];
 function cycleUser(){user=USERS[(USERS.indexOf(user)+1)%USERS.length];document.getElementById('userBadge').textContent='👤 '+user;}
