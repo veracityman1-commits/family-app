@@ -305,9 +305,24 @@ pre.summary{white-space:pre-wrap;background:#f6f8fb;border-radius:10px;padding:1
     <div class="sec">
       <h3>숙소 · 비상 정보 <small>폰마다 따로 저장 — 각자 적어두세요</small></h3>
       <input id="iAddr" placeholder="숙소 주소 (몬드스테이 · 올림픽로71길 68 101호)" onchange="saveInfo()">
-      <input id="iHost" placeholder="호스트 연락처" style="margin-top:8px" onchange="saveInfo()">
-      <input id="iDoor" placeholder="도어락 비번 / 입실 안내" style="margin-top:8px" onchange="saveInfo()">
+      <input id="iHost" placeholder="호스트 선유 — 연락은 에어비앤비 앱 메시지" style="margin-top:8px" onchange="saveInfo()">
+      <input id="iDoor" placeholder="도어락: 키패드 한 번 터치 후 ____* (에어비앤비 앱 › 숙소 출입 방법)" style="margin-top:8px" onchange="saveInfo()">
+      <input id="iWifi" placeholder="와이파이 DLive5G_8F4A / 비번: (에어비앤비 앱 › 와이파이 정보)" style="margin-top:8px" onchange="saveInfo()">
       <input id="iFlight" placeholder="항공편명 (가는편 / 오는편)" style="margin-top:8px" onchange="saveInfo()">
+      <p class="note">🔒 도어락 비번·와이파이 비번은 이 앱(공개 주소)에 넣지 않았어요. 에어비앤비 앱에서 보고 위 칸에 적으면 <b>이 폰에만</b> 저장됩니다.</p>
+    </div>
+    <div class="sec">
+      <h3>🏠 숙소 이용 안내 <small>몬드스테이 · 에어비앤비 안내문 요약</small></h3>
+      <p class="note" style="line-height:1.7">
+        <b>체크인</b> 10/2 15:00 이후 · 셀프 체크인(키패드) · 예약코드 HMZNYFE3XQ · 환불 불가<br>
+        <b>체크아웃</b> 10/4 11:00 이전 — ① 사용한 수건 한곳에 모으기 ② 조명·가전 전원 끄기 ③ 문 잠겼는지 확인 ④ 쓰레기는 호스트 안내대로<br>
+        <b>규칙</b> 소음 제한 <b>22:00~08:00</b>(아이들 밤에 뛰지 않기) · 금연 · <b>변기에 휴지 금지</b> → 휴지통에(막힘) · 정원 6명 · 반려동물 불가
+      </p>
+      <p class="note" style="line-height:1.7;margin-top:6px">
+        <b>TV</b> 리모컨 빨간 전원 → 검은 화면에 글씨만 나오면 흰 리모컨 맨 위 오른쪽 네모 버튼(셋톱박스 빨간불)<br>
+        <b>주방</b> 커피포트 온도 지정 가능 · 식기건조대는 싱크대 하단 문 안<br>
+        <b>세탁</b> 세탁기 절반만 채우고 세제 소량 · 건조대 있음 · 큰 빨래는 천호역 1번 출구 24시 셀프빨래방(카드·건조기)
+      </p>
     </div>
     <div class="sec">
       <h3>날씨 메모</h3>
@@ -447,7 +462,7 @@ const DAYS = [
   {id:'m3',t:'16:45',type:'move',line:'gyeongui',chip:'경의중앙+5호선',title:'이촌 → 천호 (짐 들고)',time:'35분 · 왕십리 환승 1회',
    legs:[{line:'gyeongui',chip:'경의중앙선',from:'이촌역',train:'팔당행',next:'서빙고역'},{line:'l5',chip:'5호선',from:'왕십리역',train:'마천행',next:'마장역'}], dest:'천호역',
    detail:'① 이촌역 경의중앙선 <b>팔당행</b> (덕소행·용문행도 같은 방향) → 왕십리 하차<br>② 5호선 <b>마천행</b> (하남검단산행도 같은 방향) → 천호<br>🚪 천호역 <b>1·2번 출구</b> → 숙소까지 평지 도보 5분',from:['이촌역',P.museum],to:['천호역',P.cheonho]},
-  {id:'v3',t:'17:30',type:'visit',title:'몬드스테이 체크인',sub:'올림픽로71길 68 101호 · 천호역 도보 5분 · 1층·평지 · 체크인 시각은 약속이 아니라 늦어도 됨'},
+  {id:'v3',t:'17:30',type:'visit',title:'몬드스테이 체크인',sub:'올림픽로71길 68 101호 · 천호역 도보 5분 · 1층·평지 · 셀프 체크인: 키패드 터치 후 비번 → [정보] 탭 · 체크인 시각은 약속이 아니라 늦어도 됨 · 변기에 휴지 금지'},
   {id:'v13',t:'17:45',type:'visit',title:'천호 문구완구거리 🧸',sub:'천호역 1번 출구 1분 · 명신완구·SB현대유통 등 5~6곳 · 말랑이·슬라임·키캡 · 문방구보다 30% 저렴 · 대부분 19시 마감(일·공휴일 휴무 많음 → 금요일이 유일한 기회) · 30분 · 규칙: 한 명당 5천원, 하나씩'},
   {id:'e2',t:'18:30',type:'meal',title:'저녁 — 천호 먹자골목',sub:'현대백화점 천호점·이마트 인근 · 문구거리에서 도보'}
  ]},
@@ -489,7 +504,7 @@ const DAYS = [
  { date:'2026-10-04', items:[
   {id:'m8',t:'10:00',type:'move',line:'l8',chip:'8호선',title:'체크아웃 → 잠실 직행 ✨',time:'10분 · 환승 없음 · 3정거장',
    legs:[{line:'l8',chip:'8호선',from:'천호역',train:'모란행',next:'강동구청역'}], dest:'잠실역 (3정거장)',
-   detail:'짐 들고 가는 구간이 10분으로 끝남. 이틀 강행군 뒤라 서두르지 않는다(체크아웃 11시까지)<br>🚪 잠실역 지하 → 롯데월드몰 직결',from:['천호역',P.cheonho],to:['롯데월드몰',P.lotte]},
+   detail:'체크아웃 전: 수건 한곳에 · 조명·가전 끄기 · 쓰레기 호스트 안내대로 · 문 잠금 확인<br>짐 들고 가는 구간이 10분으로 끝남. 이틀 강행군 뒤라 서두르지 않는다(체크아웃 11시까지)<br>🚪 잠실역 지하 → 롯데월드몰 직결',from:['천호역',P.cheonho],to:['롯데월드몰',P.lotte]},
   {id:'v9',t:'10:15',type:'visit',title:'롯데월드몰 — 짐 보관',sub:'대형락커 · 만석 시 안내데스크 짐보관 · 전날 밤에 락커 위치 미리 찾아둘 것'},
   {id:'v10',t:'11:00',type:'visit',title:'서울스카이 전망대',sub:'<b>11:00 회차</b> · 10:40 지하1층 매표·보안검색 · 117~123층 · 85분 · 아쿠아리움은 제주에 있어 뺌(9/29)',resv:true,dl:'2026-10-04T11:00',dlLabel:'스카이 예약 시간'},
   {id:'ms5',t:'',type:'mission',title:'미션 · 전망대에서 남산타워 찾기 🔭',sub:'우리 어제 갔던(또는 안 갔던) 그곳!'},
@@ -745,7 +760,7 @@ const PREPAID_SUM=PREPAID.reduce((a,b)=>a+b.amt,0);
 const RESV_FIXED=[
  {id:'r0a',title:'항공 가는편 — 대한항공',when:'10/2(금) 08:35 제주 → 김포 09:40',fixed:true,code:'DRENH9'},
  {id:'r0b',title:'항공 오는편 — 진에어',when:'10/4(일) 19:05 김포 → 제주 20:15',fixed:true,code:'AQSL7D'},
- {id:'r0c',title:'숙소 — 몬드스테이(천호)',when:'10/2 15:00 체크인 ~ 10/4 11:00 체크아웃 · 올림픽로71길 68 101호',fixed:true},
+ {id:'r0c',title:'숙소 — 몬드스테이(천호)',when:'10/2 15:00 체크인 ~ 10/4 11:00 체크아웃 · 올림픽로71길 68 101호 · 셀프 체크인(키패드, 비번은 [정보] 탭에 각자 입력) · 호스트 선유 · 환불 불가',fixed:true,code:'HMZNYFE3XQ'},
  {id:'rdoc',title:'📄 증빙서류 — 가족관계증명서·다자녀카드',when:'10/3 과학관 다자녀 할인 확인용(입장 때 제시, 없으면 현장 차액) · <b>종이 출력본 지참이 원칙</b> · 아래에 캡처를 첨부하면 <b>이 폰에만</b> 저장되고 GitHub에는 안 올라감 — 주민번호가 있는 서류라 앱 본체에는 넣지 않음 · 세 폰에 각각 첨부'},
  {id:'r3',open:'2026-10-01T10:00',openLabel:'서울스카이 결제·예약 (11:00 회차)',title:'⭐ 서울스카이 (전망대만)',when:'10/4(일) <b>11:00 회차</b> · 대인2+소인3 · 정상가 115,800원 → 10/1에 카드 프로모션(삼성 등) 확인 후 결제 · 아쿠아리움은 뺌(9/29)'},
  {id:'r1',fixed:true,code:'1806641',title:'국립중앙박물관 어린이박물관',when:'10/2(금) <b>4회차 14:30~15:50</b> · 예약자 박효성 · 성인2·초등2·영유아1 · 14:30 정각 입장(30분 경과 시 취소) · 게이트에서 QR 스캔',qrs:[{label:'입장 QR · No. 1806641',src:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACuAQAAAACHdwtDAAABAElEQVR4nO2XMW5DIRBEH3+3xzfIUeBmUW5GjuIDRIJ+rUnBt9w4UqpsEa8QQtPwxAyLKOJJ3Y5nKrzk/yoj7aS0AJsAJkUSoEmaOA3aCZZA4gDrYl8IHAotieQh30qPP97yB9nrh2eSOEAVi/CudXqUe3dsttS748DZ8BdxX2blxFf31TeW85lEgiTqoA6bRB0BynFn5+RssAHSSMoJkoK2T4M6TMol0cR0WpPozi5omi3qSM0J0KLKJJtZiX28xTaJ1aNmvcUHwCq+u8p9zuonNrHZoo49Et3Z5cDqdn1POpMDoCpAE6+jvI3II7mVUi44xOq6ZuWkvH5eL/kX8jcREaxre1R5OQAAAABJRU5ErkJggg=='}]},
@@ -755,7 +770,7 @@ const DEADLINES = [];
 DAYS.forEach((d,di)=>d.items.forEach(it=>{ if(it.dl) DEADLINES.push({dt:new Date(it.dl),label:it.dlLabel,id:it.id}); }));
 
 /* ══════════ 상태 & 공유 저장 ══════════ */
-const APP_VER='10.01'; // 배포할 때마다 갱신 — 가족 폰이 최신인지 확인용
+const APP_VER='10.02'; // 배포할 때마다 갱신 — 가족 폰이 최신인지 확인용
 let user='가족', day=0, tab='timeline', editId=null;
 const USERS=['가족','아빠','엄마','서준','서우'];
 function cycleUser(){user=USERS[(USERS.indexOf(user)+1)%USERS.length];document.getElementById('userBadge').textContent='👤 '+user;}
@@ -1169,7 +1184,7 @@ function attachImg(id,input){
 }
 
 /* ══════════ 정보 ══════════ */
-const INFO_IDS=['iAddr','iHost','iDoor','iFlight','iW0','iW1','iW2'];
+const INFO_IDS=['iAddr','iHost','iDoor','iWifi','iFlight','iW0','iW1','iW2'];
 function fillInfo(){ INFO_IDS.forEach(k=>{const el=document.getElementById(k); if(el)el.value=S.info[k]||'';}); }
 async function saveInfo(){ INFO_IDS.forEach(k=>{S.info[k]=document.getElementById(k).value;}); updateHeader(); await save('info'); }
 
