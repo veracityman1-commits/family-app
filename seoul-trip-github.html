@@ -352,13 +352,13 @@ pre.summary{white-space:pre-wrap;background:#f6f8fb;border-radius:10px;padding:1
       <p class="note">· 체크·예산 기록은 <b>이 휴대폰에만</b> 저장됩니다 (가족끼리 자동 공유되지 않음)<br>· 인터넷이 있어야 열립니다 (오프라인 미지원)<br>· 브라우저 기록을 지우면 저장 내용도 지워지니 주의하세요<br>· 홈 화면에 추가하면 앱처럼 쓸 수 있어요</p>
     </div>
     <div class="sec">
-      <h3>🌤 날씨 · 복장 <small>9/30 저녁 예보 기준</small></h3>
+      <h3>🌤 날씨 · 복장 <small>10/1 저녁 기상청 발표 기준</small></h3>
       <p class="note" style="line-height:1.7">
-        <b>10/2 금</b> 맑음 · 9~22℃ — 아침 공항·저녁 문구거리는 쌀쌀, 낮 박물관은 반팔<br>
-        <b>10/3 토</b> 맑음 · 10~23℃ — 경복궁·형무소 야외 햇볕 강함, 종각 귀가(20:50) 때 10℃대<br>
-        <b>10/4 일</b> 흐리고 <b>오후 비</b>(70%) · 13~24℃ — 김포공항역→항공박물관 400m 걷는 구간이 비 맞는 자리
+        <b>10/2 금</b> 맑음 · 12~21℃ — 아침 기온 낮고 일교차 큼, 낮 박물관은 반팔<br>
+        <b>10/3 토</b> 맑다가 오전부터 구름 · 10~23℃ — 경복궁·형무소 야외, 종각 귀가(20:50) 때 10℃대<br>
+        <b>10/4 일</b> 구름 많음 · 13~22℃ — <b>비는 늦은 밤 21시 이후</b>로 늦춰짐 → 낮 일정·김포공항역→항공박물관 도보·19:05 출발 모두 비 영향 없음(제주 도착 20:15)
       </p>
-      <p class="note" style="margin-top:6px">· 옷은 <b>반팔/얇은 긴팔 + 벗기 쉬운 겉옷</b>(후드집업·바람막이) — 일교차 13℃, 실내는 덥고 아침저녁은 춥다<br>· 접이식 우산 3개 + 아이 우비(일요일)<br>· 많이 걷는 날: 운동화·여벌 양말·모자·선크림<br>· 아이 여벌옷 1세트(형무소·문구거리 흙·물감)</p>
+      <p class="note" style="margin-top:6px">· 옷은 <b>반팔/얇은 긴팔 + 벗기 쉬운 겉옷</b>(후드집업·바람막이) — 일교차 10℃ 이상, 실내는 덥고 아침저녁은 춥다<br>· 접이식 우산 1~2개만(일요일 밤 대비) · 아이 우비는 생략해도 됨<br>· 많이 걷는 날: 운동화·여벌 양말·모자·선크림<br>· 아이 여벌옷 1세트(형무소·문구거리 흙·물감)</p>
     </div>
     <div class="sec">
       <h3>교통카드 체크</h3>
@@ -448,8 +448,12 @@ const DAYS = [
  { date:'2026-10-02', items:[
   {id:'f1',t:'08:35',type:'flight',title:'제주공항 출발 ✈️',sub:'대한항공 DRENH9 · 김포 09:40 도착'},
   {id:'m1',t:'09:55',type:'move',line:'taxi',chip:'🚐 벤티',title:'김포공항 → 전쟁기념관',time:'30분 · 약 3만원',
-   detail:'짐+첫날 아침이라 택시 유지 구간. 대체: 공항철도 서울역 방면 김포공항→공덕 → 6호선 신내 방면(다음역 효창공원앞) 공덕→삼각지 (40분)',
+   detail:'짐+첫날 아침이라 택시가 기본. 택시 줄이 길거나 3만원이 아까우면 아래 지하철(5호선→6호선)로 — 바로 아래 카드',
    from:['김포공항',P.gimpo],to:['전쟁기념관',P.war]},
+  {id:'m1b',t:'',type:'move',line:'l5',chip:'5→6호선',title:'🅱 지하철 대안: 김포공항 → 삼각지',time:'45분 · 택시 대신',
+   legs:[{line:'l5',chip:'5호선',from:'김포공항역',train:'하남검단산행',next:'송정역'},{line:'l6',chip:'6호선',from:'공덕역',train:'신내행',next:'효창공원앞역'}], dest:'삼각지역',
+   detail:'🚪 국내선 청사 지하에서 5호선 승강장이 제일 가깝다(공항철도·9호선은 더 깊음) · <b>마천행도 같은 방향</b>(공덕까지는 노선이 같음)<br>① 5호선 17정거장 → 공덕 하차 35분 · 출근시간 지나서 앉아갈 확률 높음<br>② 6호선 <b>신내행</b>(다음역 효창공원앞) 2정거장 → 삼각지 5분 · 공덕 환승 통로 5분<br>🚪 삼각지역 <b>12번 출구</b> = 전쟁기념관 정문 · 요금 어른·어린이 4명 약 6천원(서건 무료)',
+   from:['김포공항역',P.gimpo],to:['전쟁기념관',P.war]},
   {id:'v1',t:'10:40',type:'visit',title:'전쟁기념관',sub:'짐은 물품보관소에 · 옥외전시 먼저 · 관람 2시간'},
   {id:'ms1',t:'',type:'mission',title:'미션 · 거북선 모형을 찾아라!',sub:'찾으면 가족사진 한 장 📸'},
   {id:'m2',t:'12:35',type:'move',line:'l4',chip:'4호선',title:'삼각지 → 이촌 (2정거장)',time:'5분',
@@ -487,8 +491,12 @@ const DAYS = [
    detail:'① 경복궁역 3호선 <b>오금행</b> → 충무로 하차<br>② 4호선 <b>불암산행</b> (진접행도 같은 방향 · 옛 이름 당고개행) → 혜화<br>🚪 혜화역 <b>4번 출구</b> → 과학관 도보 10분',from:['경복궁역',P.tosok],to:['국립어린이과학관',P.sci]},
   {id:'v7',t:'14:20',type:'visit',title:'국립어린이과학관',sub:'14:20 도착·상설 입장권 QR → <b>2층 빛놀이터 14:30~14:55</b>(25분 · 유아 보호자 동반) → 15:00~16:00 상설전시관 자유관람 → 16:00 출발 · 예약 2건 QR은 [예약] 탭 · 입장 시 등본·다자녀카드 실물 제시',resv:true,dl:'2026-10-03T14:30',dlLabel:'빛놀이터 14:30 회차'},
   {id:'m6',t:'16:00',type:'move',line:'taxi',chip:'🚐 벤티',title:'혜화 → 서대문형무소',time:'20분 · 약 1.5만원',
-   detail:'환승 2회 구간이라 택시 유지. ⚠️ 개천절 토요일 오후 도심 정체 시 30~40분 걸릴 수 있음 — 앱 지도로 먼저 확인하고, 막히면 지하철로 전환: 4호선 사당·오이도 방면 혜화→충무로 → 3호선 대화 방면 충무로→독립문 (30분)',
+   detail:'택시가 기본. ⚠️ 개천절 토요일 오후 도심 정체 시 30~40분 걸릴 수 있음 — 앱 지도로 먼저 확인하고, 막히면 바로 아래 버스 카드로. 지하철은 환승 2회(4호선 혜화→충무로 → 3호선 독립문, 30분)라 버스보다 걷는 게 많음',
    from:['혜화역',P.sci],to:['서대문형무소역사관',P.prison]},
+  {id:'m6b',t:'',type:'move',line:'bus',chip:'🚌 버스',title:'🅱 버스 대안: 과학관 → 서대문형무소',time:'30분 · 환승 1회 · 도보 적음',
+   legs:[{line:'bus',chip:'버스',from:'명륜3가.성대입구'},{line:'bus',chip:'환승',from:''}], dest:'독립문역.한성과학고',
+   detail:'과학관에서 <b>명륜3가.성대입구</b> 정류장 도보 5분 → 버스 승차 → 중간 1회 환승 → <b>독립문역.한성과학고</b> 하차 → 형무소 도보 5분<br>노선이 여러 개라 번호는 안 적음 — 아래 네이버지도 길찾기에서 그 시간에 제일 빨리 오는 버스를 타면 됨. 하차 정류장 이름만 기억: <b>독립문역.한성과학고</b><br>⚠️ 서건 지하철 무료지만 시내버스는 만 6세 미만 보호자 동반 시 무료 — 어린이 티머니 2장만 태그',
+   from:['국립어린이과학관',P.sci],to:['서대문형무소역사관',P.prison]},
   {id:'v8',t:'16:20',type:'visit',title:'서대문형무소역사관',sub:'항일 역사 · 입장 마감 17:30, 관람은 18:00까지',dl:'2026-10-03T17:30',dlLabel:'형무소 입장 마감'},
   {id:'ms4',t:'',type:'mission',title:'미션 · 태극기를 몇 번 찾을 수 있을까?',sub:'나올 때 개수 비교'},
   {id:'m7',t:'18:00',type:'move',line:'l3',chip:'3호선',title:'독립문 → 종각',time:'20분 · 종로3가 하차 후 도보 5분',
@@ -749,7 +757,7 @@ const STUDY = {
 const STUDY_ORDER=['hangang','war','museum','yongsan','palace','guard','folk','seochon','science','prison','sky','namsan','avia'];
 const ITEM_STUDY={v1:'war',v2:'museum',opt2:'yongsan',e3:'seochon',v4:'palace',v5:'guard',v6:'folk',v7:'science',v8:'prison',v10:'sky','v-nam':'namsan','v-avia':'avia'};
 
-const LINECOLOR={l5:'#996CAC',l1:'#0052A4',l3:'#EF7C1C',l4:'#00A5DE',l8:'#E6186C',l9:'#BDB092',gyeongui:'#57b6a0',bus:'#3d5afe',taxi:'#c7433d',walk:'#9aa3b2'};
+const LINECOLOR={arex:'#0090D2',l6:'#CD7C2F',l5:'#996CAC',l1:'#0052A4',l3:'#EF7C1C',l4:'#00A5DE',l8:'#E6186C',l9:'#BDB092',gyeongui:'#57b6a0',bus:'#3d5afe',taxi:'#c7433d',walk:'#9aa3b2'};
 const PREPAID=[
  {label:'항공 가는편 (10/2 대한항공)',amt:239100},
  {label:'항공 오는편 (10/4 진에어)',amt:453500},
@@ -770,7 +778,7 @@ const DEADLINES = [];
 DAYS.forEach((d,di)=>d.items.forEach(it=>{ if(it.dl) DEADLINES.push({dt:new Date(it.dl),label:it.dlLabel,id:it.id}); }));
 
 /* ══════════ 상태 & 공유 저장 ══════════ */
-const APP_VER='10.02'; // 배포할 때마다 갱신 — 가족 폰이 최신인지 확인용
+const APP_VER='10.06'; // 배포할 때마다 갱신 — 가족 폰이 최신인지 확인용
 let user='가족', day=0, tab='timeline', editId=null;
 const USERS=['가족','아빠','엄마','서준','서우'];
 function cycleUser(){user=USERS[(USERS.indexOf(user)+1)%USERS.length];document.getElementById('userBadge').textContent='👤 '+user;}
@@ -921,7 +929,7 @@ function moveHTML(it){
     <div class="card"><div class="seg" id="seg-${it.id}" style="border-color:${col}">
       <button class="line-badge${it.legs?' multi':''}" onclick="document.getElementById('seg-${it.id}').classList.toggle('open')">
         ${it.legs
-          ? it.legs.map(l=>`<span class="leg"><span class="chip" style="background:${LINECOLOR[l.line]||'#888'}">${l.chip}</span> ${l.from}<small>(${l.train}/${l.next} 방면)</small></span>`).join('<span class="arr">›</span>')
+          ? it.legs.map(l=>`<span class="leg"><span class="chip" style="background:${LINECOLOR[l.line]||'#888'}">${l.chip}</span> ${l.from}${l.train?`<small>(${l.train}/${l.next} 방면)</small>`:''}</span>`).join('<span class="arr">›</span>')
             + `<span class="arr">›</span><span class="leg dest">${it.dest}</span><span class="dur">${it.time}</span>`
           : `<span class="chip" style="background:${col}">${it.chip}</span> ${it.title} <span style="color:var(--sub);font-weight:500;font-size:12px">· ${it.time}</span>`}
       </button>
